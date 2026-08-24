@@ -317,3 +317,325 @@
   text-align: center;
   color: var(--text-primary);
 }
+
+
+/* ════════════════════════════════════════════════════════════
+   LOGIN SPLIT LAYOUT
+   ════════════════════════════════════════════════════════════ */
+
+.login-split {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+/* ── Left branded panel ─────────────────────────────────────── */
+.login-panel-left {
+  background: linear-gradient(145deg, #0f0c29, #1a1040, #090d16);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 3.5rem;
+}
+
+/* Ambient blobs */
+.login-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+}
+
+.login-blob--1 {
+  width: 400px;
+  height: 400px;
+  background: rgba(99, 102, 241, 0.18);
+  top: -10%;
+  left: -10%;
+}
+
+.login-blob--2 {
+  width: 350px;
+  height: 350px;
+  background: rgba(6, 182, 212, 0.12);
+  bottom: 5%;
+  right: -5%;
+}
+
+.login-panel-left-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 420px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+/* Brand */
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.login-brand-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, #6366f1, #06b6d4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 24px rgba(99, 102, 241, 0.45);
+  flex-shrink: 0;
+}
+
+.login-brand-name {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: -0.03em;
+}
+
+/* Hero text */
+.login-hero-title {
+  font-size: clamp(2rem, 3.5vw, 2.75rem);
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0 0 0.85rem;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+}
+
+.login-hero-accent {
+  background: linear-gradient(135deg, #6366f1, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.login-hero-desc {
+  font-size: 0.95rem;
+  color: rgba(148, 163, 184, 0.85);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* Feature list */
+.login-features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.login-feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 0.9rem 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.login-feature-item:hover {
+  background: rgba(99, 102, 241, 0.08);
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+.login-feature-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  color: #818cf8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.login-feature-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 0.15rem;
+}
+
+.login-feature-sub {
+  font-size: 0.78rem;
+  color: rgba(148, 163, 184, 0.7);
+}
+
+.login-panel-footer {
+  font-size: 0.75rem;
+  color: rgba(100, 116, 139, 0.7);
+  margin: 0;
+}
+
+/* ── Right form panel ───────────────────────────────────────── */
+.login-panel-right {
+  background: #090d16;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  position: relative;
+}
+
+.login-form-wrap {
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Mobile logo — hidden on desktop */
+.login-mobile-brand {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.login-form-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 0.35rem;
+  letter-spacing: -0.03em;
+}
+
+.login-form-sub {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin: 0 0 2rem;
+}
+
+/* Submit button enhancements */
+.login-submit-btn {
+  margin-top: 0.5rem;
+  height: 48px;
+  font-size: 0.95rem;
+  position: relative;
+}
+
+.login-btn-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+/* Demo accounts section */
+.login-demo-section {
+  margin-top: 2rem;
+}
+
+.login-demo-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.85rem;
+}
+
+.login-demo-line {
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.login-demo-btns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+}
+
+.login-demo-btn {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 0.65rem 0.5rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s;
+  text-align: center;
+  color: inherit;
+}
+
+.login-demo-btn:hover {
+  background: rgba(99, 102, 241, 0.08);
+  border-color: rgba(99, 102, 241, 0.25);
+  transform: translateY(-1px);
+}
+
+.login-demo-role-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: block;
+  margin-bottom: 0.1rem;
+}
+
+.login-demo-role-dot--admin   { background: #818cf8; box-shadow: 0 0 8px rgba(129,140,248,0.6); }
+.login-demo-role-dot--trainer { background: #34d399; box-shadow: 0 0 8px rgba(52,211,153,0.6); }
+.login-demo-role-dot--trainee { background: #fbbf24; box-shadow: 0 0 8px rgba(251,191,36,0.6); }
+
+.login-demo-btn-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.login-demo-btn-sub {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .login-split {
+    grid-template-columns: 1fr;
+  }
+
+  .login-panel-left {
+    display: none;
+  }
+
+  .login-mobile-brand {
+    display: flex;
+  }
+
+  .login-panel-right {
+    min-height: 100vh;
+    padding: 2.5rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-demo-btns {
+    grid-template-columns: 1fr;
+  }
+
+  .login-demo-btn {
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+}
