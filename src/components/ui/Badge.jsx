@@ -1,9 +1,5 @@
 /**
- * Badge  — status pill
- *
- * Props:
- *   status  string   — mapped to a color class
- *   label   string?  — override display text (defaults to capitalised status)
+ * Badge — Status pill with glowing status dot indicator
  */
 const STATUS_COLOR = {
   active:    'badge--green',
@@ -20,8 +16,24 @@ const STATUS_COLOR = {
   trainee:   'badge--gray',
 };
 
-export default function Badge({ status = '', label }) {
-  const colorClass = STATUS_COLOR[status?.toLowerCase()] ?? 'badge--gray';
+export default function Badge({ status = '', label, dot = true }) {
+  const norm = status?.toLowerCase() || '';
+  const colorClass = STATUS_COLOR[norm] ?? 'badge--gray';
   const text = label ?? (status ? status[0].toUpperCase() + status.slice(1) : '—');
-  return <span className={`badge ${colorClass}`}>{text}</span>;
+
+  return (
+    <span className={`badge ${colorClass}`}>
+      {dot && (
+        <span style={{
+          width: 6,
+          height: 6,
+          borderRadius: '50%',
+          backgroundColor: 'currentColor',
+          boxShadow: '0 0 6px currentColor',
+          display: 'inline-block',
+        }} />
+      )}
+      {text}
+    </span>
+  );
 }

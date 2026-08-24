@@ -2,13 +2,30 @@ import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabaseClient';
 import { useSupabaseQuery } from '../../hooks/useSupabaseQuery';
-import StatCard   from '../../components/ui/StatCard';
-import Card       from '../../components/ui/Card';
-import Chart      from '../../components/ui/Chart';
-import Badge      from '../../components/ui/Badge';
+import StatCard from '../../components/ui/StatCard';
+import Card from '../../components/ui/Card';
+import Chart from '../../components/ui/Chart';
+import Badge from '../../components/ui/Badge';
+import QuickActionCard from '../../components/ui/QuickActionCard';
+import ThreeDHero from '../../components/3d/ThreeDHero';
+import {
+  Users,
+  UserCheck,
+  IdCard,
+  DollarSign,
+  Clock,
+  CalendarCheck,
+  UserPlus,
+  PlusCircle,
+  CreditCard,
+  ClipboardList,
+  ArrowUpRight,
+  TrendingUp,
+  PieChart
+} from 'lucide-react';
 
 function fmt(n) { return n?.toLocaleString() ?? '0'; }
-function currency(n) { return `$${Number(n ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`; }
+function currency(n) { return `₹${Number(n ?? 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`; }
 function today() { return new Date().toISOString().slice(0, 10); }
 
 export default function AdminDashboard() {
@@ -61,7 +78,10 @@ export default function AdminDashboard() {
     const counts = { active: 0, expired: 0, cancelled: 0 };
     (data ?? []).forEach(m => { counts[m.status] = (counts[m.status] ?? 0) + 1; });
     return {
-      data: Object.entries(counts).map(([name, count]) => ({ name, Count: count })),
+      data: Object.entries(counts).map(([name, count]) => ({
+        name: name.charAt(0).toUpperCase() + name.slice(1),
+        Count: count
+      })),
       error: null,
     };
   }, []);
@@ -69,36 +89,178 @@ export default function AdminDashboard() {
   const { data: recentPayments, loading: payLoading } = useSupabaseQuery(async () => {
     return supabase
       .from('payments')
-      .select('id, amount, payment_date, payment_status, trainees(profiles(name))')
+      .select('id, amount, payment_date, payment_status, trainees(profiles(name, email))')
       .order('created_at', { ascending: false })
-      .limit(5);
+      .limit(6);
   }, []);
+
+  const attendanceRate = useMemo(() => {
+    if (!stats?.trainees) return '88%';
+    const pct = Math.round(((stats.todayAttendance || 0) / (stats.trainees || 1)) * 100);
+    return `${pct}%`;
+  }, [stats]);
 
   return (
     <div>
-      {/* Stat cards */}
+      {/* ── 3D Interactive Hero Section ──────────────────────── */}
+      <section className="dashboard-hero-section">
+        <div className="hero-content-left">
+          <div className="hero-pill-tag">
+            <span className="hero-pill-dot" />
+            <span>FitGym Intelligence ERP</span>
+          </div>
+          <h2 className="hero-title">
+            Welcome back, <span className="hero-title-highlight">Admin</span>
+          </h2>
+          <p className="hero-description">
+            Here is a high-level operational overview of your gym performance, trainee check-ins, and active cash flows today.
+          </p>
+
+          <div className="hero-stats-row">
+            <div className="hero-stat-item">
+              <span className="hero-stat-val">{currency(stats?.revenue)}</span>
+              <span className="hero-stat-lbl">Total Cashflow</span>
+            </div>
+            <div className="hero-stat-item">
+              <span className="hero-stat-val">{fmt(stats?.memberships)}</span>
+              <span className="hero-stat-lbl">Active Memberships</span>
+            </div>
+            <div className="hero-stat-item">
+              <span className="hero-stat-val">{attendanceRate}</span>
+              <span className="hero-stat-lbl">Daily Attendance</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 3D Model with Floating HUD Cards */}
+        <ThreeDHero
+          attendancePct={attendanceRate}
+          status="Operating Peak"
+          activeMembers={stats?.trainees ?? 0}
+        />
+      </section>
+
+      {/* ── KPI Stat Cards Grid ──────────────────────────────── */}
       <div className="stat-grid">
-        <StatCard label="Total Trainees"       value={fmt(stats?.trainees)}        icon="👥" color="blue"   loading={statsLoading} />
-        <StatCard label="Total Trainers"        value={fmt(stats?.trainers)}         icon="🏋️" color="purple" loading={statsLoading} />
-        <StatCard label="Active Memberships"    value={fmt(stats?.memberships)}      icon="🪪" color="green"  loading={statsLoading} />
-        <StatCard label="Total Revenue"         value={currency(stats?.revenue)}     icon="💰" color="orange" loading={statsLoading} />
-        <StatCard label="Pending Payments"      value={fmt(stats?.pending)}          icon="⏳" color="red"    loading={statsLoading} />
-        <StatCard label="Today's Attendance"    value={fmt(stats?.todayAttendance)}  icon="📋" color="blue"   loading={statsLoading} />
+        <StatCard
+          label="Total Trainees"
+          value={fmt(stats?.trainees)}
+          icon={<Users size={22} />}
+          color="blue"
+          trend={12}
+          loading={statsLoading}
+        />
+        <StatCard
+          label="Total Trainers"
+          value={fmt(stats?.trainers)}
+          icon={<UserCheck size={22} />}
+          color="purple"
+          trend={5}
+          loading={statsLoading}
+        />
+        <StatCard
+          label="Active Memberships"
+          value={fmt(stats?.memberships)}
+          icon={<IdCard size={22} />}
+          color="green"
+          trend={18}
+          loading={statsLoading}
+        />
+        <StatCard
+          label="Total Revenue"
+          value={currency(stats?.revenue)}
+          icon={<DollarSign size={22} />}
+          color="orange"
+          trend={24}
+          loading={statsLoading}
+        />
+        <StatCard
+          label="Pending Payments"
+          value={fmt(stats?.pending)}
+          icon={<Clock size={22} />}
+          color="red"
+          loading={statsLoading}
+        />
+        <StatCard
+          label="Today's Attendance"
+          value={fmt(stats?.todayAttendance)}
+          icon={<CalendarCheck size={22} />}
+          color="blue"
+          trend={8}
+          loading={statsLoading}
+        />
       </div>
 
-      {/* Charts */}
+      {/* ── Quick Actions Row ────────────────────────────────── */}
+      <div style={{ marginBottom: '2rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
+          <h3 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0, color: '#ffffff' }}>Operational Shortcuts</h3>
+          <span style={{ fontSize: '0.78125rem', color: 'var(--text-muted)' }}>Quick management actions</span>
+        </div>
+        <div className="quick-actions-grid">
+          <QuickActionCard
+            to="/admin/trainees"
+            icon={<UserPlus size={20} />}
+            title="Register Trainee"
+            description="Onboard new gym member"
+          />
+          <QuickActionCard
+            to="/admin/trainers"
+            icon={<PlusCircle size={20} />}
+            title="Add Trainer"
+            description="Assign gym staff & trainer"
+          />
+          <QuickActionCard
+            to="/admin/memberships"
+            icon={<IdCard size={20} />}
+            title="Create Membership"
+            description="Assign subscription plan"
+          />
+          <QuickActionCard
+            to="/admin/payments"
+            icon={<CreditCard size={20} />}
+            title="Record Payment"
+            description="Process invoice & billing"
+          />
+        </div>
+      </div>
+
+      {/* ── Analytics Charts ─────────────────────────────────── */}
       <div className="dashboard-charts">
-        <Card title="Revenue (last 6 months)" className="chart-card">
+        <Card
+          title="Revenue Overview"
+          subtitle="Monthly cash collection trends (last 6 months)"
+          icon={<TrendingUp size={18} />}
+          className="chart-card"
+          actions={
+            <Link to="/admin/analytics" className="btn btn-secondary btn-sm">
+              <span>Full Analytics</span>
+              <ArrowUpRight size={14} />
+            </Link>
+          }
+        >
           <Chart
-            type="bar"
+            type="area"
             data={revenueChart ?? []}
-            series={[{ key: 'Revenue', label: 'Revenue ($)' }]}
+            series={[{ key: 'Revenue', label: 'Gross Revenue ($)', color: '#06b6d4' }]}
             xKey="name"
             height={260}
             loading={chartLoading}
           />
         </Card>
-        <Card title="Membership Status" className="chart-card">
+
+        <Card
+          title="Membership Distribution"
+          subtitle="Active vs Expired vs Cancelled plans"
+          icon={<PieChart size={18} />}
+          className="chart-card"
+          actions={
+            <Link to="/admin/memberships" className="btn btn-secondary btn-sm">
+              <span>View Plans</span>
+              <ArrowUpRight size={14} />
+            </Link>
+          }
+        >
           <Chart
             type="bar"
             data={membershipChart ?? []}
@@ -110,10 +272,17 @@ export default function AdminDashboard() {
         </Card>
       </div>
 
-      {/* Recent payments */}
+      {/* ── Recent Payments Table ────────────────────────────── */}
       <Card
-        title="Recent Payments"
-        actions={<Link to="/admin/payments" className="btn btn-secondary btn-sm">View all</Link>}
+        title="Recent Billing & Transactions"
+        subtitle="Real-time payment logs and member invoices"
+        icon={<ClipboardList size={18} />}
+        actions={
+          <Link to="/admin/payments" className="btn btn-secondary btn-sm">
+            <span>View All Payments</span>
+            <ArrowUpRight size={14} />
+          </Link>
+        }
       >
         {payLoading ? (
           <div className="spinner" style={{ margin: '2rem auto' }} />
@@ -122,21 +291,38 @@ export default function AdminDashboard() {
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>Trainee</th>
+                  <th>Trainee / Member</th>
                   <th>Amount</th>
-                  <th>Date</th>
+                  <th>Payment Date</th>
                   <th>Status</th>
+                  <th style={{ textAlign: 'right' }}>Action</th>
                 </tr>
               </thead>
               <tbody>
                 {(recentPayments ?? []).length === 0 ? (
-                  <tr><td colSpan={4} className="table-empty">No payments yet.</td></tr>
+                  <tr><td colSpan={5} className="table-empty">No payment transactions recorded yet.</td></tr>
                 ) : (recentPayments ?? []).map(p => (
                   <tr key={p.id}>
-                    <td>{p.trainees?.profiles?.name ?? '—'}</td>
-                    <td>{currency(p.amount)}</td>
+                    <td>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span style={{ fontWeight: 600, color: '#ffffff' }}>
+                          {p.trainees?.profiles?.name ?? 'Anonymous Trainee'}
+                        </span>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                          {p.trainees?.profiles?.email ?? ''}
+                        </span>
+                      </div>
+                    </td>
+                    <td style={{ fontWeight: 700, color: '#ffffff' }}>
+                      {currency(p.amount)}
+                    </td>
                     <td>{p.payment_date}</td>
                     <td><Badge status={p.payment_status} /></td>
+                    <td style={{ textAlign: 'right' }}>
+                      <Link to="/admin/payments" className="btn btn-secondary btn-sm" style={{ padding: '0.25rem 0.6rem' }}>
+                        Details
+                      </Link>
+                    </td>
                   </tr>
                 ))}
               </tbody>

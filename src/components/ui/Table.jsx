@@ -1,13 +1,5 @@
 /**
- * Table  — responsive data table
- *
- * Props:
- *   columns   Array<{ key, label, render?, width? }>
- *   data      Array<object>   — each row must have a unique `id` field
- *   loading   boolean?
- *   emptyMsg  string?         — text shown when data is empty
- *   rowKey    string?         — field used as React key, default 'id'
- *   onRowClick  (row) => void?
+ * Table — Responsive Dark SaaS Data Table with Skeleton Loaders
  */
 export default function Table({
   columns = [],

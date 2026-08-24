@@ -1,19 +1,13 @@
 import { useEffect, useRef } from 'react';
+import { X } from 'lucide-react';
 
 /**
- * Modal  — accessible dialog overlay
- *
- * Props:
- *   open      boolean
- *   onClose   () => void
- *   title     string?
- *   size      'sm'|'md'|'lg'   default 'md'
- *   children
+ * Modal — Accessible Dark Glassmorphism Dialog Overlay
  */
 export default function Modal({ open, onClose, title, size = 'md', children }) {
   const dialogRef = useRef(null);
 
-  // Close on Escape
+  // Close on Escape key
   useEffect(() => {
     if (!open) return;
     function onKey(e) {
@@ -33,7 +27,7 @@ export default function Modal({ open, onClose, title, size = 'md', children }) {
     return () => { document.body.style.overflow = ''; };
   }, [open]);
 
-  // Focus trap – move focus into dialog on open
+  // Move focus into dialog on open
   useEffect(() => {
     if (open && dialogRef.current) {
       dialogRef.current.focus();
@@ -64,7 +58,7 @@ export default function Modal({ open, onClose, title, size = 'md', children }) {
             onClick={onClose}
             aria-label="Close dialog"
           >
-            ✕
+            <X size={18} />
           </button>
         </div>
 

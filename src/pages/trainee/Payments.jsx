@@ -7,7 +7,7 @@ import Badge     from '../../components/ui/Badge';
 import StatCard  from '../../components/ui/StatCard';
 import EmptyState from '../../components/ui/EmptyState';
 
-function currency(n) { return `$${Number(n ?? 0).toFixed(2)}`; }
+function currency(n) { return `₹${Number(n ?? 0).toFixed(2)}`; }
 
 export default function TraineePayments() {
   const { profile } = useAuth();

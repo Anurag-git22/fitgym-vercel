@@ -1,47 +1,99 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import {
+  LayoutDashboard,
+  Users,
+  Dumbbell,
+  CreditCard,
+  CalendarCheck,
+  TrendingUp,
+  Bell,
+  Settings,
+  UserCheck,
+  IdCard,
+  LogOut,
+  ChevronLeft,
+  ChevronRight,
+  Flame,
+  User
+} from 'lucide-react';
 
-/* ── Nav definitions per role ─────────────────────────────── */
-const NAV = {
+/* ── Grouped Nav Definitions ───────────────────────────────── */
+const NAV_CONFIG = {
   admin: [
-    { to: '/admin/dashboard',     icon: '🏠', label: 'Dashboard'     },
-    { to: '/admin/trainers',      icon: '🏋️', label: 'Trainers'      },
-    { to: '/admin/trainees',      icon: '👥', label: 'Trainees'      },
-    { to: '/admin/memberships',   icon: '🪪', label: 'Memberships'   },
-    { to: '/admin/payments',      icon: '💳', label: 'Payments'      },
-    { to: '/admin/attendance',    icon: '📋', label: 'Attendance'    },
-    { to: '/admin/analytics',     icon: '📊', label: 'Analytics'     },
-    { to: '/admin/notifications', icon: '🔔', label: 'Notifications' },
-    { to: '/admin/settings',      icon: '⚙️', label: 'Settings'      },
+    {
+      category: 'Overview',
+      items: [
+        { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+        { to: '/admin/analytics', icon: TrendingUp, label: 'Analytics' },
+      ]
+    },
+    {
+      category: 'Management',
+      items: [
+        { to: '/admin/trainers', icon: UserCheck, label: 'Trainers' },
+        { to: '/admin/trainees', icon: Users, label: 'Trainees' },
+        { to: '/admin/memberships', icon: IdCard, label: 'Memberships' },
+        { to: '/admin/attendance', icon: CalendarCheck, label: 'Attendance' },
+      ]
+    },
+    {
+      category: 'Finance & System',
+      items: [
+        { to: '/admin/payments', icon: CreditCard, label: 'Payments' },
+        { to: '/admin/notifications', icon: Bell, label: 'Notifications' },
+        { to: '/admin/settings', icon: Settings, label: 'Settings' },
+      ]
+    }
   ],
   trainer: [
-    { to: '/trainer/dashboard',  icon: '🏠', label: 'Dashboard'  },
-    { to: '/trainer/trainees',   icon: '👥', label: 'My Trainees' },
-    { to: '/trainer/workouts',   icon: '💪', label: 'Workouts'   },
-    { to: '/trainer/attendance', icon: '📋', label: 'Attendance' },
-    { to: '/trainer/progress',   icon: '📈', label: 'Progress'   },
+    {
+      category: 'Overview',
+      items: [
+        { to: '/trainer/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+      ]
+    },
+    {
+      category: 'Training',
+      items: [
+        { to: '/trainer/trainees', icon: Users, label: 'My Trainees' },
+        { to: '/trainer/workouts', icon: Dumbbell, label: 'Workout Plans' },
+        { to: '/trainer/attendance', icon: CalendarCheck, label: 'Attendance' },
+        { to: '/trainer/progress', icon: TrendingUp, label: 'Progress Tracking' },
+      ]
+    }
   ],
   trainee: [
-    { to: '/trainee/dashboard',  icon: '🏠', label: 'Dashboard'  },
-    { to: '/trainee/profile',    icon: '👤', label: 'Profile'    },
-    { to: '/trainee/membership', icon: '🪪', label: 'Membership' },
-    { to: '/trainee/workout',    icon: '💪', label: 'Workout'    },
-    { to: '/trainee/attendance', icon: '📋', label: 'Attendance' },
-    { to: '/trainee/progress',   icon: '📈', label: 'Progress'   },
-    { to: '/trainee/payments',   icon: '💳', label: 'Payments'   },
-  ],
+    {
+      category: 'Member Portal',
+      items: [
+        { to: '/trainee/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+        { to: '/trainee/profile', icon: User, label: 'Profile' },
+        { to: '/trainee/membership', icon: IdCard, label: 'My Membership' },
+      ]
+    },
+    {
+      category: 'Fitness & Activity',
+      items: [
+        { to: '/trainee/workout', icon: Dumbbell, label: 'Daily Workout' },
+        { to: '/trainee/progress', icon: TrendingUp, label: 'Body Progress' },
+        { to: '/trainee/attendance', icon: CalendarCheck, label: 'Attendance Log' },
+        { to: '/trainee/payments', icon: CreditCard, label: 'Invoices & Billing' },
+      ]
+    }
+  ]
 };
 
 const ROLE_LABEL = {
-  admin:   'Admin',
-  trainer: 'Trainer',
-  trainee: 'Member',
+  admin: 'Administrator',
+  trainer: 'Personal Trainer',
+  trainee: 'Gym Member',
 };
 
 export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }) {
   const { profile, role, signOut } = useAuth();
   const navigate = useNavigate();
-  const navItems = NAV[role] ?? [];
+  const sections = NAV_CONFIG[role] ?? [];
 
   async function handleSignOut() {
     await signOut();
@@ -51,73 +103,85 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
   return (
     <aside className={[
       'sidebar',
-      collapsed   ? 'sidebar--collapsed'    : '',
-      mobileOpen  ? 'sidebar--mobile-open'  : '',
+      collapsed ? 'sidebar--collapsed' : '',
+      mobileOpen ? 'sidebar--mobile-open' : '',
     ].filter(Boolean).join(' ')}>
       {/* Brand */}
       <div className="sidebar-brand">
-        <span className="sidebar-brand-icon">💪</span>
-        {!collapsed && <span className="sidebar-brand-name">FitGym</span>}
+        <div className="sidebar-brand-icon">
+          <Flame size={20} />
+        </div>
+        {!collapsed && (
+          <>
+            <span className="sidebar-brand-name">FitGym</span>
+            <span className="sidebar-brand-badge">SaaS</span>
+          </>
+        )}
       </div>
 
-      {/* Role badge */}
-      {!collapsed && role && (
-        <div className="sidebar-role-badge">
-          {ROLE_LABEL[role] ?? role}
-        </div>
-      )}
-
-      {/* Navigation */}
+      {/* Navigation Sections */}
       <nav className="sidebar-nav" aria-label="Main navigation">
-        {navItems.map(({ to, icon, label }) => (
-          <NavLink
-            key={to}
-            to={to}
-            className={({ isActive }) =>
-              `sidebar-link${isActive ? ' sidebar-link--active' : ''}`
-            }
-            title={collapsed ? label : undefined}
-          >
-            <span className="sidebar-link-icon">{icon}</span>
-            {!collapsed && <span className="sidebar-link-label">{label}</span>}
-          </NavLink>
+        {sections.map((section, idx) => (
+          <div key={idx} style={{ marginBottom: collapsed ? '0.25rem' : '0.5rem' }}>
+            {!collapsed && section.category && (
+              <div className="sidebar-category">{section.category}</div>
+            )}
+            {section.items.map(({ to, icon: Icon, label }) => (
+              <NavLink
+                key={to}
+                to={to}
+                onClick={onMobileClose}
+                className={({ isActive }) =>
+                  `sidebar-link${isActive ? ' sidebar-link--active' : ''}`
+                }
+                title={collapsed ? label : undefined}
+              >
+                <div className="sidebar-link-icon">
+                  <Icon size={18} />
+                </div>
+                {!collapsed && <span className="sidebar-link-label">{label}</span>}
+              </NavLink>
+            ))}
+          </div>
         ))}
       </nav>
 
-      {/* User footer */}
+      {/* User profile footer */}
       <div className="sidebar-footer">
         {!collapsed && profile && (
           <div className="sidebar-user">
             <div className="sidebar-user-avatar">
-              {profile.avatar_url
-                ? <img src={profile.avatar_url} alt={profile.name} />
-                : <span>{profile.name?.[0]?.toUpperCase() ?? '?'}</span>
-              }
+              {profile.avatar_url ? (
+                <img src={profile.avatar_url} alt={profile.name} />
+              ) : (
+                <span>{profile.name?.[0]?.toUpperCase() ?? '?'}</span>
+              )}
             </div>
             <div className="sidebar-user-info">
               <span className="sidebar-user-name">{profile.name}</span>
-              <span className="sidebar-user-email">{profile.email}</span>
+              <span className="sidebar-user-role">{ROLE_LABEL[role] ?? role}</span>
             </div>
           </div>
         )}
+
         <button
           className="sidebar-signout"
           onClick={handleSignOut}
-          title="Sign out"
+          title="Sign out of account"
           aria-label="Sign out"
         >
-          <span>🚪</span>
-          {!collapsed && <span>Sign out</span>}
+          <LogOut size={16} />
+          {!collapsed && <span>Sign Out</span>}
         </button>
       </div>
 
-      {/* Collapse toggle */}
+      {/* Collapse Toggle */}
       <button
         className="sidebar-toggle"
         onClick={onToggle}
         aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
       >
-        {collapsed ? '›' : '‹'}
+        {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
       </button>
     </aside>
   );

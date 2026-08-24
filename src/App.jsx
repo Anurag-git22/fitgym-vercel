@@ -1,9 +1,10 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute   from './routes/ProtectedRoute';
 import DashboardLayout  from './components/layout/DashboardLayout';
 
 /* ── Public pages ───────────────────────────────────────────── */
+import LandingPage    from './pages/landing/LandingPage';
 import Login          from './pages/Login';
 import ForgotPassword from './pages/ForgotPassword';
 import Forbidden      from './pages/Forbidden';
@@ -83,8 +84,8 @@ export default function App() {
           <Route path="/403"             element={<Forbidden />} />
           <Route path="/404"             element={<NotFound />} />
 
-          {/* Root redirect */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          {/* Root → landing page */}
+          <Route path="/" element={<LandingPage />} />
 
           {/* ── Admin ──────────────────────────────────────── */}
           <Route element={<ProtectedRoute role="admin" />}>

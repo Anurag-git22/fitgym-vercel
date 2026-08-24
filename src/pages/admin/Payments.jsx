@@ -6,7 +6,7 @@ import Table from '../../components/ui/Table';
 import Modal from '../../components/ui/Modal';
 import Badge from '../../components/ui/Badge';
 
-function currency(n) { return `$${Number(n ?? 0).toFixed(2)}`; }
+function currency(n) { return `₹${Number(n ?? 0).toFixed(2)}`; }
 
 const INIT = { trainee_id: '', membership_id: '', amount: '', payment_date: new Date().toISOString().slice(0,10), payment_status: 'pending' };
 

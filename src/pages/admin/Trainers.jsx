@@ -1,20 +1,22 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { useSupabaseQuery } from '../../hooks/useSupabaseQuery';
-import Card       from '../../components/ui/Card';
-import Table      from '../../components/ui/Table';
-import Modal      from '../../components/ui/Modal';
-import Badge      from '../../components/ui/Badge';
+import Card from '../../components/ui/Card';
+import Table from '../../components/ui/Table';
+import Modal from '../../components/ui/Modal';
+import Badge from '../../components/ui/Badge';
 import EmptyState from '../../components/ui/EmptyState';
+import { UserCheck, UserPlus, Search, Edit2, Power } from 'lucide-react';
 
 const INIT = { name: '', email: '', password: '', phone: '', specialization: '', joining_date: '' };
 
 export default function AdminTrainers() {
-  const [modal,  setModal]  = useState(null); // null | 'add' | 'edit' | 'delete'
-  const [form,   setForm]   = useState(INIT);
+  const [modal, setModal] = useState(null); // null | 'add' | 'edit' | 'delete'
+  const [form, setForm] = useState(INIT);
   const [target, setTarget] = useState(null);
-  const [busy,   setBusy]   = useState(false);
-  const [error,  setError]  = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
 
   const { data: trainers, loading, refetch } = useSupabaseQuery(() =>
     supabase
@@ -22,6 +24,17 @@ export default function AdminTrainers() {
       .select('id, specialization, joining_date, profiles(id, name, email, phone, account_status)')
       .order('created_at', { ascending: false }),
   []);
+
+  const filteredTrainers = useMemo(() => {
+    if (!trainers) return [];
+    if (!search.trim()) return trainers;
+    const q = search.toLowerCase();
+    return trainers.filter(t =>
+      t.profiles?.name?.toLowerCase().includes(q) ||
+      t.profiles?.email?.toLowerCase().includes(q) ||
+      t.specialization?.toLowerCase().includes(q)
+    );
+  }, [trainers, search]);
 
   /* ── Handlers ─────────────────────────────────────────────── */
   function openAdd() { setForm(INIT); setError(''); setModal('add'); }
@@ -46,8 +59,7 @@ export default function AdminTrainers() {
     e.preventDefault();
     setBusy(true); setError('');
     try {
-      // 1. Create auth user via Supabase Admin — but from the browser we use the
-      //    anon key, so we call signUp. The handle_new_user trigger creates the profile.
+      // 1. Create auth user
       const { data: authData, error: authErr } = await supabase.auth.signUp({
         email:    form.email,
         password: form.password,
@@ -58,12 +70,18 @@ export default function AdminTrainers() {
       const uid = authData.user?.id;
       if (!uid) throw new Error('User creation failed — no user id returned.');
 
-      // 2. Update phone on the profile (trigger may not have it yet)
-      if (form.phone) {
-        await supabase.from('profiles').update({ phone: form.phone }).eq('id', uid);
-      }
+      // 2. Manually create profile row (trigger was removed)
+      const { error: profileErr } = await supabase.from('profiles').upsert({
+        id:             uid,
+        name:           form.name,
+        email:          form.email,
+        phone:          form.phone || null,
+        role:           'trainer',
+        account_status: 'active',
+      });
+      if (profileErr) throw profileErr;
 
-      // 3. Create trainers row
+      // 3. Create trainer row
       const { error: trainerErr } = await supabase.from('trainers').insert({
         profile_id:     uid,
         specialization: form.specialization || null,
@@ -118,18 +136,50 @@ export default function AdminTrainers() {
 
   /* ── Table columns ────────────────────────────────────────── */
   const columns = [
-    { key: 'name',           label: 'Name',           render: (_, r) => r.profiles?.name ?? '—' },
-    { key: 'email',          label: 'Email',          render: (_, r) => r.profiles?.email ?? '—' },
-    { key: 'specialization', label: 'Specialization', render: v => v ?? '—' },
-    { key: 'joining_date',   label: 'Joined',         render: v => v ?? '—' },
-    { key: 'status',         label: 'Status',         render: (_, r) => <Badge status={r.profiles?.account_status} /> },
+    {
+      key: 'name',
+      label: 'Trainer',
+      render: (_, r) => (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{
+            width: 36,
+            height: 36,
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, var(--purple), var(--primary))',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#fff',
+            fontWeight: 700,
+            fontSize: '0.85rem'
+          }}>
+            {r.profiles?.name?.[0]?.toUpperCase() ?? 'T'}
+          </div>
+          <div>
+            <div style={{ fontWeight: 600, color: '#ffffff' }}>{r.profiles?.name ?? '—'}</div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{r.profiles?.email ?? ''}</div>
+          </div>
+        </div>
+      )
+    },
+    { key: 'specialization', label: 'Specialization', render: v => <span style={{ color: 'var(--cyan)', fontWeight: 500 }}>{v ?? 'General Fitness'}</span> },
+    { key: 'phone', label: 'Contact Phone', render: (_, r) => r.profiles?.phone || '—' },
+    { key: 'joining_date', label: 'Joined Date', render: v => v ?? '—' },
+    { key: 'status', label: 'Status', render: (_, r) => <Badge status={r.profiles?.account_status} /> },
     {
       key: 'actions', label: '',
       render: (_, r) => (
-        <div style={{ display: 'flex', gap: '0.4rem' }}>
-          <button className="btn btn-secondary btn-sm" onClick={() => openEdit(r)}>Edit</button>
-          <button className="btn btn-danger btn-sm"    onClick={() => openDelete(r)}>
-            {r.profiles?.account_status === 'active' ? 'Deactivate' : 'Activate'}
+        <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'flex-end' }}>
+          <button className="btn btn-secondary btn-sm" onClick={() => openEdit(r)}>
+            <Edit2 size={13} />
+            <span>Edit</span>
+          </button>
+          <button
+            className={r.profiles?.account_status === 'active' ? 'btn btn-danger btn-sm' : 'btn btn-success btn-sm'}
+            onClick={() => openDelete(r)}
+          >
+            <Power size={13} />
+            <span>{r.profiles?.account_status === 'active' ? 'Deactivate' : 'Activate'}</span>
           </button>
         </div>
       ),
@@ -139,66 +189,95 @@ export default function AdminTrainers() {
   return (
     <div>
       <div className="page-header">
-        <h2>Trainers</h2>
-        <button className="btn btn-primary" onClick={openAdd}>+ Add Trainer</button>
+        <div>
+          <h2>Trainers Management</h2>
+          <p className="page-header-subtitle">Manage personal trainers, specializations, and access credentials</p>
+        </div>
+        <button className="btn btn-primary" onClick={openAdd}>
+          <UserPlus size={16} />
+          <span>Add Trainer</span>
+        </button>
       </div>
 
       <Card padding={false}>
+        <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <Search size={16} style={{ color: 'var(--text-muted)' }} />
+          <input
+            type="text"
+            placeholder="Search trainers by name, email, or discipline..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: '#ffffff',
+              fontSize: '0.875rem',
+              outline: 'none',
+              width: '100%'
+            }}
+          />
+        </div>
+
         {trainers?.length === 0 && !loading ? (
-          <EmptyState icon="🏋️" title="No trainers yet" message="Add your first trainer to get started." action={<button className="btn btn-primary" onClick={openAdd}>Add Trainer</button>} />
+          <EmptyState
+            icon={<UserCheck size={36} />}
+            title="No trainers found"
+            message="Onboard your first gym trainer to start assigning members and workouts."
+            action={<button className="btn btn-primary" onClick={openAdd}><UserPlus size={16} /><span>Add Trainer</span></button>}
+          />
         ) : (
-          <Table columns={columns} data={trainers ?? []} loading={loading} emptyMsg="No trainers found." />
+          <Table columns={columns} data={filteredTrainers} loading={loading} emptyMsg="No trainers match your search criteria." />
         )}
       </Card>
 
       {/* Add Modal */}
-      <Modal open={modal === 'add'} onClose={() => setModal(null)} title="Add Trainer" size="md">
+      <Modal open={modal === 'add'} onClose={() => setModal(null)} title="Onboard New Trainer" size="md">
         <form onSubmit={handleAdd} className="auth-form">
           <div className="form-row">
-            <div className="form-group"><label>Full Name *</label><input required value={form.name}   onChange={e=>setForm(f=>({...f,name:e.target.value}))} /></div>
-            <div className="form-group"><label>Email *</label>    <input required type="email" value={form.email}  onChange={e=>setForm(f=>({...f,email:e.target.value}))} /></div>
+            <div className="form-group"><label>Full Name *</label><input required placeholder="e.g. Marcus Vance" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} /></div>
+            <div className="form-group"><label>Email Address *</label><input required type="email" placeholder="trainer@fitgym.net" value={form.email} onChange={e=>setForm(f=>({...f,email:e.target.value}))} /></div>
           </div>
           <div className="form-row">
-            <div className="form-group"><label>Password *</label>        <input required type="password" value={form.password}       onChange={e=>setForm(f=>({...f,password:e.target.value}))} /></div>
-            <div className="form-group"><label>Phone</label>             <input value={form.phone}        onChange={e=>setForm(f=>({...f,phone:e.target.value}))} /></div>
+            <div className="form-group"><label>Password *</label><input required type="password" placeholder="••••••••" value={form.password} onChange={e=>setForm(f=>({...f,password:e.target.value}))} /></div>
+            <div className="form-group"><label>Phone Number</label><input placeholder="+1 (555) 000-0000" value={form.phone} onChange={e=>setForm(f=>({...f,phone:e.target.value}))} /></div>
           </div>
           <div className="form-row">
-            <div className="form-group"><label>Specialization</label>    <input value={form.specialization} onChange={e=>setForm(f=>({...f,specialization:e.target.value}))} /></div>
-            <div className="form-group"><label>Joining Date</label>      <input type="date" value={form.joining_date} onChange={e=>setForm(f=>({...f,joining_date:e.target.value}))} /></div>
+            <div className="form-group"><label>Specialization</label><input placeholder="e.g. Strength & Conditioning" value={form.specialization} onChange={e=>setForm(f=>({...f,specialization:e.target.value}))} /></div>
+            <div className="form-group"><label>Joining Date</label><input type="date" value={form.joining_date} onChange={e=>setForm(f=>({...f,joining_date:e.target.value}))} /></div>
           </div>
           {error && <div className="auth-error">{error}</div>}
           <div className="form-actions">
             <button type="button" className="btn btn-secondary" onClick={()=>setModal(null)}>Cancel</button>
-            <button type="submit" className="btn btn-primary" disabled={busy}>{busy ? 'Saving…' : 'Add Trainer'}</button>
+            <button type="submit" className="btn btn-primary" disabled={busy}>{busy ? 'Saving…' : 'Onboard Trainer'}</button>
           </div>
         </form>
       </Modal>
 
       {/* Edit Modal */}
-      <Modal open={modal === 'edit'} onClose={() => setModal(null)} title="Edit Trainer" size="md">
+      <Modal open={modal === 'edit'} onClose={() => setModal(null)} title="Edit Trainer Details" size="md">
         <form onSubmit={handleEdit} className="auth-form">
           <div className="form-row">
             <div className="form-group"><label>Full Name *</label><input required value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} /></div>
-            <div className="form-group"><label>Phone</label>      <input value={form.phone}          onChange={e=>setForm(f=>({...f,phone:e.target.value}))} /></div>
+            <div className="form-group"><label>Phone Number</label><input value={form.phone} onChange={e=>setForm(f=>({...f,phone:e.target.value}))} /></div>
           </div>
           <div className="form-row">
-            <div className="form-group"><label>Specialization</label> <input value={form.specialization} onChange={e=>setForm(f=>({...f,specialization:e.target.value}))} /></div>
-            <div className="form-group"><label>Joining Date</label>   <input type="date" value={form.joining_date} onChange={e=>setForm(f=>({...f,joining_date:e.target.value}))} /></div>
+            <div className="form-group"><label>Specialization</label><input value={form.specialization} onChange={e=>setForm(f=>({...f,specialization:e.target.value}))} /></div>
+            <div className="form-group"><label>Joining Date</label><input type="date" value={form.joining_date} onChange={e=>setForm(f=>({...f,joining_date:e.target.value}))} /></div>
           </div>
           {error && <div className="auth-error">{error}</div>}
           <div className="form-actions">
             <button type="button" className="btn btn-secondary" onClick={()=>setModal(null)}>Cancel</button>
-            <button type="submit" className="btn btn-primary" disabled={busy}>{busy ? 'Saving…' : 'Save Changes'}</button>
+            <button type="submit" className="btn btn-primary" disabled={busy}>{busy ? 'Updating…' : 'Save Changes'}</button>
           </div>
         </form>
       </Modal>
 
-      {/* Deactivate/Activate Confirm */}
-      <Modal open={modal === 'delete'} onClose={() => setModal(null)} title="Change Account Status" size="sm">
-        <p style={{marginTop:0}}>
+      {/* Deactivate/Activate Modal */}
+      <Modal open={modal === 'delete'} onClose={() => setModal(null)} title="Update Account Access" size="sm">
+        <p style={{ marginTop: 0, color: 'var(--text-secondary)' }}>
           {target?.profiles?.account_status === 'active'
-            ? `Deactivate trainer "${target?.profiles?.name}"? They will no longer be able to sign in.`
-            : `Reactivate trainer "${target?.profiles?.name}"?`}
+            ? `Deactivate access for trainer "${target?.profiles?.name}"? They will temporarily lose access to their portal.`
+            : `Reactivate portal access for trainer "${target?.profiles?.name}"?`}
         </p>
         <div className="form-actions">
           <button className="btn btn-secondary" onClick={() => setModal(null)}>Cancel</button>
@@ -207,7 +286,7 @@ export default function AdminTrainers() {
             onClick={handleToggleStatus}
             disabled={busy}
           >
-            {busy ? 'Updating…' : target?.profiles?.account_status === 'active' ? 'Deactivate' : 'Activate'}
+            {busy ? 'Updating…' : target?.profiles?.account_status === 'active' ? 'Confirm Deactivate' : 'Confirm Activate'}
           </button>
         </div>
       </Modal>

@@ -110,7 +110,7 @@ export default function TraineeDashboard() {
         />
         <StatCard
           label="Last Payment"
-          value={latestPayment ? `$${Number(latestPayment.amount).toFixed(2)}` : '—'}
+          value={latestPayment ? `₹${Number(latestPayment.amount).toFixed(2)}` : '—'}
           icon="💳"
           color={latestPayment?.payment_status === 'paid' ? 'green' : 'orange'}
           loading={payLoading}

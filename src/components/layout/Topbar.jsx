@@ -1,35 +1,49 @@
+import { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { Bell, Search, Menu, ChevronRight } from 'lucide-react';
 
 /* Map pathname segments to readable titles */
 const ROUTE_TITLES = {
   dashboard:     'Dashboard',
-  trainers:      'Trainers',
-  trainees:      'My Trainees',
-  memberships:   'Memberships',
-  payments:      'Payments',
-  attendance:    'Attendance',
-  analytics:     'Analytics',
-  notifications: 'Notifications',
-  settings:      'Settings',
-  workouts:      'Workouts',
-  progress:      'Progress',
-  profile:       'My Profile',
-  membership:    'My Membership',
-  workout:       'My Workout',
+  trainers:      'Trainers Management',
+  trainees:      'Trainees Directory',
+  memberships:   'Membership Plans',
+  payments:      'Payment Invoices',
+  attendance:    'Attendance Logs',
+  analytics:     'Performance Analytics',
+  notifications: 'Broadcasts & Alerts',
+  settings:      'Gym Settings',
+  workouts:      'Workout Routines',
+  progress:      'Progress Tracker',
+  profile:       'Member Profile',
+  membership:    'Membership Details',
+  workout:       'My Workout Plan',
 };
 
-function getPageTitle(pathname) {
+function getPageDetails(pathname) {
   const segments = pathname.split('/').filter(Boolean);
-  // Last meaningful segment (skip UUIDs)
+  const portal = segments[0] ? segments[0][0].toUpperCase() + segments[0].slice(1) : 'Portal';
   const last = [...segments].reverse().find(s => !s.match(/^[0-9a-f-]{36}$/i));
-  return ROUTE_TITLES[last] ?? 'FitGym';
+  const pageTitle = ROUTE_TITLES[last] ?? 'Overview';
+  return { portal, pageTitle };
 }
 
 export default function Topbar({ onMenuToggle }) {
   const { profile, role } = useAuth();
   const location = useLocation();
-  const title = getPageTitle(location.pathname);
+  const { portal, pageTitle } = getPageDetails(location.pathname);
+  const [timeStr, setTimeStr] = useState('');
+
+  useEffect(() => {
+    const update = () => {
+      const now = new Date();
+      setTimeStr(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+    };
+    update();
+    const interval = setInterval(update, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   const profileLink =
     role === 'trainee' ? '/trainee/profile' :
@@ -38,46 +52,74 @@ export default function Topbar({ onMenuToggle }) {
 
   return (
     <header className="topbar">
-      {/* Left: hamburger (mobile) + page title */}
+      {/* Left: hamburger (mobile) + breadcrumbs & title */}
       <div className="topbar-left">
         <button
           className="topbar-hamburger"
           onClick={onMenuToggle}
-          aria-label="Toggle menu"
+          aria-label="Toggle navigation menu"
         >
-          ☰
+          <Menu size={20} />
         </button>
-        <h1 className="topbar-title">{title}</h1>
+
+        <div className="topbar-title-wrap">
+          <div className="topbar-breadcrumb">
+            <span>{portal}</span>
+            <ChevronRight size={12} />
+            <span>{pageTitle}</span>
+          </div>
+          <h1 className="topbar-title">{pageTitle}</h1>
+        </div>
       </div>
 
-      {/* Right: notifications + avatar */}
+      {/* Center: Search input */}
+      <div className="topbar-search">
+        <Search size={15} className="topbar-search-icon" />
+        <input
+          type="text"
+          placeholder="Search members, routines, records..."
+          aria-label="Quick search"
+        />
+      </div>
+
+      {/* Right: Live Gym Status, Notifications, Avatar */}
       <div className="topbar-right">
+        {timeStr && (
+          <div className="topbar-live-badge">
+            <span className="topbar-live-dot" />
+            <span>LIVE {timeStr}</span>
+          </div>
+        )}
+
         {role === 'admin' && (
           <Link
             to="/admin/notifications"
             className="topbar-icon-btn"
             aria-label="Notifications"
-            title="Notifications"
+            title="System Notifications"
           >
-            🔔
+            <Bell size={18} />
+            <span className="topbar-badge-count">3</span>
           </Link>
         )}
 
         {profile && (
           <div className="topbar-avatar-wrap">
             {profileLink ? (
-              <Link to={profileLink} className="topbar-avatar" title="My profile">
-                {profile.avatar_url
-                  ? <img src={profile.avatar_url} alt={profile.name} />
-                  : <span>{profile.name?.[0]?.toUpperCase() ?? '?'}</span>
-                }
+              <Link to={profileLink} className="topbar-avatar" title="View Profile">
+                {profile.avatar_url ? (
+                  <img src={profile.avatar_url} alt={profile.name} />
+                ) : (
+                  <span>{profile.name?.[0]?.toUpperCase() ?? '?'}</span>
+                )}
               </Link>
             ) : (
               <div className="topbar-avatar">
-                {profile.avatar_url
-                  ? <img src={profile.avatar_url} alt={profile.name} />
-                  : <span>{profile.name?.[0]?.toUpperCase() ?? '?'}</span>
-                }
+                {profile.avatar_url ? (
+                  <img src={profile.avatar_url} alt={profile.name} />
+                ) : (
+                  <span>{profile.name?.[0]?.toUpperCase() ?? '?'}</span>
+                )}
               </div>
             )}
             <div className="topbar-user-info">

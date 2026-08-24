@@ -4,7 +4,7 @@ import Card    from '../../components/ui/Card';
 import Chart   from '../../components/ui/Chart';
 import StatCard from '../../components/ui/StatCard';
 
-function currency(n) { return `$${Number(n ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`; }
+function currency(n) { return `₹${Number(n ?? 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`; }
 
 export default function AdminAnalytics() {
   /* Revenue per month */
