@@ -37,12 +37,42 @@ import TraineeAttendance from './pages/trainee/Attendance';
 import TraineeProgress   from './pages/trainee/Progress';
 import TraineePayments   from './pages/trainee/Payments';
 
+import { isSupabaseConfigured } from './lib/supabaseClient';
+
 /* ── Layout wrapper helper ──────────────────────────────────── */
 function WithLayout({ children }) {
   return <DashboardLayout>{children}</DashboardLayout>;
 }
 
 export default function App() {
+  if (!isSupabaseConfigured) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f172a', color: '#f8fafc', padding: '1.5rem', fontFamily: 'Inter, system-ui, sans-serif' }}>
+        <div style={{ maxWidth: '520px', width: '100%', background: '#1e293b', padding: '2rem', borderRadius: '16px', border: '1px solid #334155', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}>
+          <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>⚙️</div>
+          <h2 style={{ color: '#f8fafc', margin: '0 0 0.75rem', fontSize: '1.4rem', fontWeight: 700 }}>Supabase Configuration Required</h2>
+          <p style={{ color: '#94a3b8', lineHeight: 1.6, fontSize: '0.925rem', margin: '0 0 1.25rem' }}>
+            Your FitGym app is deployed on Vercel, but it needs your Supabase project credentials to connect to the backend.
+          </p>
+          <div style={{ background: '#0f172a', padding: '1rem', borderRadius: '8px', border: '1px solid #1e293b', marginBottom: '1.25rem' }}>
+            <p style={{ margin: '0 0 0.5rem', fontSize: '0.8125rem', fontWeight: 600, color: '#38bdf8' }}>
+              Add these in Vercel &rarr; Settings &rarr; Environment Variables:
+            </p>
+            <code style={{ display: 'block', color: '#f1f5f9', background: '#1e293b', padding: '0.375rem 0.625rem', borderRadius: '4px', fontSize: '0.8125rem', marginBottom: '0.375rem' }}>
+              VITE_SUPABASE_URL
+            </code>
+            <code style={{ display: 'block', color: '#f1f5f9', background: '#1e293b', padding: '0.375rem 0.625rem', borderRadius: '4px', fontSize: '0.8125rem' }}>
+              VITE_SUPABASE_ANON_KEY
+            </code>
+          </div>
+          <p style={{ fontSize: '0.8125rem', color: '#64748b', margin: 0 }}>
+            After adding the variables in Vercel, click <strong>Redeploy</strong> to apply changes.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <BrowserRouter>
       <AuthProvider>
