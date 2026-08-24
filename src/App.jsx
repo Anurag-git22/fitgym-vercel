@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute   from './routes/ProtectedRoute';
 import DashboardLayout  from './components/layout/DashboardLayout';
@@ -84,8 +84,8 @@ export default function App() {
           <Route path="/403"             element={<Forbidden />} />
           <Route path="/404"             element={<NotFound />} />
 
-          {/* Root → landing page */}
-          <Route path="/" element={<LandingPage />} />
+          {/* Root → login */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
 
           {/* ── Admin ──────────────────────────────────────── */}
           <Route element={<ProtectedRoute role="admin" />}>
