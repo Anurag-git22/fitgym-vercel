@@ -1,0 +1,301 @@
+/* ════════════════════════════════════════════════════════════
+   pages.css  — page-specific layout patterns
+   Referenced by global.css via @import
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Dashboard two-column chart grid ──────────────────────── */
+.dashboard-charts {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  margin-bottom: 1.5rem;
+}
+
+/* ── Analytics 1-2 grid ────────────────────────────────────── */
+.analytics-grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+/* ── Detail page 3-up card grid ────────────────────────────── */
+.detail-grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin-bottom: 1.25rem;
+}
+
+/* ── Definition list used in detail cards ───────────────────── */
+.detail-dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.35rem 1rem;
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.detail-dl dt {
+  font-weight: 600;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.detail-dl dd {
+  margin: 0;
+  color: #0f172a;
+  word-break: break-word;
+}
+
+/* ── Simple list (dashboard feeds) ─────────────────────────── */
+.simple-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.simple-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: #374151;
+  gap: 0.5rem;
+}
+
+/* ── Tab row (filter tabs — Payments, Progress, etc.) ──────── */
+.tab-row {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  color: #64748b;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+  white-space: nowrap;
+}
+
+.tab-btn:hover { background: #f1f5f9; }
+
+.tab-btn--active {
+  background: #6366f1;
+  border-color: #6366f1;
+  color: #ffffff;
+}
+
+/* ── Notification list ──────────────────────────────────────── */
+.notif-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.notif-item {
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.notif-item:last-child { border-bottom: none; }
+
+.notif-item--unread {
+  background: #f8f7ff;
+  border-left: 3px solid #6366f1;
+}
+
+.notif-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.notif-name  { font-size: 0.82rem; font-weight: 700; color: #0f172a; }
+.notif-time  { font-size: 0.75rem; color: #94a3b8; }
+.notif-message { font-size: 0.875rem; color: #374151; margin: 0; }
+
+/* ── Workout exercise list (trainer + trainee) ──────────────── */
+.workout-exercise-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.workout-exercise-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.workout-exercise-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #6366f1;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.workout-exercise-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 0.2rem;
+}
+
+.workout-exercise-meta {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+/* Exercise builder row (trainer Workouts form) */
+.exercise-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  padding: 0.75rem;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 0.5rem;
+}
+
+.exercise-row .form-group { min-width: 100px; }
+
+/* ── Workout page two-column layout ─────────────────────────── */
+.workout-layout {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+}
+
+/* Plan selector sidebar */
+.plan-selector-btn {
+  width: 100%;
+  text-align: left;
+  padding: 0.55rem 0.75rem;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.plan-selector-btn:hover { background: #f1f5f9; }
+
+.plan-selector-btn--active {
+  background: #eef2ff;
+  color: #4f46e5;
+  font-weight: 700;
+}
+
+/* ── Membership hero card ────────────────────────────────────── */
+.membership-hero {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  border-radius: 16px;
+  padding: 2rem;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.membership-plan-name {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.membership-plan-label {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 0.15rem;
+}
+
+.membership-hero .detail-dl dt { color: rgba(255,255,255,0.7); }
+.membership-hero .detail-dl dd { color: #fff; }
+
+.membership-hero-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.membership-days-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  border: 3px solid rgba(255,255,255,0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.membership-days-num   { font-size: 2rem; font-weight: 900; line-height: 1; color: #fff; }
+.membership-days-label { font-size: 0.7rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.06em; color: #fff; }
+
+/* ── Trainee detail summary cards ───────────────────────────── */
+.detail-grid .card { height: 100%; }
+
+/* ── Chart card equal height in dashboard ────────────────────── */
+.chart-card { height: 100%; }
+
+/* ── Responsive adjustments ─────────────────────────────────── */
+@media (max-width: 768px) {
+  .dashboard-charts,
+  .analytics-grid,
+  .detail-grid { grid-template-columns: 1fr; }
+
+  .workout-layout { flex-direction: column; }
+
+  .membership-hero { flex-direction: column; align-items: flex-start; }
+
+  .exercise-row { flex-direction: column; }
+
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .stat-grid { grid-template-columns: 1fr; }
+  .membership-hero { padding: 1.25rem; }
+}
