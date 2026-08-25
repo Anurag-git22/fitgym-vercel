@@ -22,21 +22,27 @@ export default function ResetPassword() {
         setValidLink(true);
         setChecking(false);
       } else if (event === 'SIGNED_IN' && session) {
-        // Also valid — token was exchanged for a session
         setValidLink(true);
+        setChecking(false);
+      } else if (event === 'SIGNED_OUT') {
         setChecking(false);
       }
     });
 
-    // Also check for an existing session (user already authenticated via token)
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        setValidLink(true);
-      }
-      setChecking(false);
-    });
+    // Give Supabase time to process the hash token from the URL
+    const timer = setTimeout(() => {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session) {
+          setValidLink(true);
+        }
+        setChecking(false);
+      });
+    }, 1000);
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timer);
+    };
   }, []);
 
   async function handleSubmit(e) {
