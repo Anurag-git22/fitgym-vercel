@@ -1,130 +1,111 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabaseClient';
 import { Dumbbell, ArrowRight } from 'lucide-react';
-import * as THREE from 'three';
 
-/* ── Three.js dumbbell for the left panel ───────────────────── */
-function initDumbbellScene(canvas) {
-  const W = canvas.clientWidth  || 320;
-  const H = canvas.clientHeight || 320;
+/* ── Abstract ERP Dashboard Visualization ───────────────────── */
+function ERPVisualization() {
+  return (
+    <div className="erp-viz">
 
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setSize(W, H);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.1;
+      {/* Background connection lines */}
+      <svg className="erp-viz-lines" viewBox="0 0 340 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="60"  y1="80"  x2="170" y2="140" stroke="rgba(99,102,241,0.15)" strokeWidth="1" strokeDasharray="4 4"/>
+        <line x1="280" y1="70"  x2="170" y2="140" stroke="rgba(6,182,212,0.12)"  strokeWidth="1" strokeDasharray="4 4"/>
+        <line x1="170" y1="140" x2="80"  y2="220" stroke="rgba(99,102,241,0.12)" strokeWidth="1" strokeDasharray="4 4"/>
+        <line x1="170" y1="140" x2="260" y2="210" stroke="rgba(6,182,212,0.1)"   strokeWidth="1" strokeDasharray="4 4"/>
+        {/* Data points */}
+        <circle cx="60"  cy="80"  r="3" fill="rgba(129,140,248,0.6)"/>
+        <circle cx="280" cy="70"  r="3" fill="rgba(6,182,212,0.6)"/>
+        <circle cx="80"  cy="220" r="3" fill="rgba(129,140,248,0.5)"/>
+        <circle cx="260" cy="210" r="3" fill="rgba(6,182,212,0.5)"/>
+        <circle cx="170" cy="140" r="5" fill="rgba(99,102,241,0.4)" />
+        <circle cx="170" cy="140" r="10" fill="rgba(99,102,241,0.08)" />
+      </svg>
 
-  const scene  = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 100);
-  camera.position.set(0, 0.3, 5.5);
+      {/* Panel 1 — Attendance mini chart (top left) */}
+      <div className="erp-panel erp-panel--tl">
+        <div className="erp-panel-label">Attendance</div>
+        <div className="erp-mini-bars">
+          {[65,80,55,90,72,88,60,95,70,85].map((h, i) => (
+            <div key={i} className="erp-mini-bar" style={{ height: `${h}%` }} />
+          ))}
+        </div>
+        <div className="erp-panel-value">86%</div>
+      </div>
 
-  const metalMat = new THREE.MeshStandardMaterial({ color: 0x8b9dff, metalness: 0.95, roughness: 0.08 });
-  const darkMat  = new THREE.MeshStandardMaterial({ color: 0x1a1f35, metalness: 0.8,  roughness: 0.3  });
-  const plateMat = new THREE.MeshStandardMaterial({ color: 0x6366f1, metalness: 0.88, roughness: 0.12 });
+      {/* Panel 2 — Circular progress (top right) */}
+      <div className="erp-panel erp-panel--tr">
+        <div className="erp-panel-label">Members</div>
+        <div className="erp-ring-wrap">
+          <svg viewBox="0 0 60 60" className="erp-ring-svg">
+            <circle cx="30" cy="30" r="24" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="4"/>
+            <circle cx="30" cy="30" r="24" fill="none" stroke="url(#ringGrad)" strokeWidth="4"
+              strokeDasharray="113" strokeDashoffset="28" strokeLinecap="round"
+              transform="rotate(-90 30 30)"/>
+            <defs>
+              <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%"   stopColor="#6366f1"/>
+                <stop offset="100%" stopColor="#06b6d4"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <span className="erp-ring-num">75%</span>
+        </div>
+      </div>
 
-  const group = new THREE.Group();
+      {/* Panel 3 — Revenue graph (center, largest) */}
+      <div className="erp-panel erp-panel--center">
+        <div className="erp-panel-header">
+          <span className="erp-panel-label">Revenue</span>
+          <span className="erp-panel-trend">↑ 18%</span>
+        </div>
+        <svg viewBox="0 0 160 50" className="erp-area-svg" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stopColor="#6366f1" stopOpacity="0.4"/>
+              <stop offset="100%" stopColor="#6366f1" stopOpacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,45 L16,38 L32,30 L48,33 L64,20 L80,25 L96,15 L112,18 L128,8 L144,12 L160,5 L160,50 L0,50 Z"
+                fill="url(#areaGrad)"/>
+          <path d="M0,45 L16,38 L32,30 L48,33 L64,20 L80,25 L96,15 L112,18 L128,8 L144,12 L160,5"
+                fill="none" stroke="#6366f1" strokeWidth="1.5" strokeLinecap="round"/>
+          {/* Glow dot at latest */}
+          <circle cx="160" cy="5" r="3" fill="#818cf8"/>
+          <circle cx="160" cy="5" r="6" fill="rgba(99,102,241,0.2)"/>
+        </svg>
+      </div>
 
-  /* Bar */
-  const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 3, 24), metalMat);
-  bar.rotation.z = Math.PI / 2;
-  group.add(bar);
+      {/* Panel 4 — Member activity (bottom left) */}
+      <div className="erp-panel erp-panel--bl">
+        <div className="erp-panel-label">Activity</div>
+        <div className="erp-activity-rows">
+          {[
+            { label: 'Admin',   w: 90, color: '#818cf8' },
+            { label: 'Trainer', w: 65, color: '#34d399' },
+            { label: 'Member',  w: 80, color: '#fbbf24' },
+          ].map(r => (
+            <div key={r.label} className="erp-activity-row">
+              <span className="erp-activity-label">{r.label}</span>
+              <div className="erp-activity-bar-track">
+                <div className="erp-activity-bar-fill" style={{ width: `${r.w}%`, background: r.color }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
-  /* Knurl */
-  const knurl = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.085, 0.7, 24), darkMat);
-  knurl.rotation.z = Math.PI / 2;
-  group.add(knurl);
+      {/* Panel 5 — Status pill (bottom right) */}
+      <div className="erp-panel erp-panel--br">
+        <div className="erp-status-dot" />
+        <div className="erp-panel-label" style={{ marginTop: '0.3rem' }}>System</div>
+        <div className="erp-status-text">Online</div>
+      </div>
 
-  function addPlates(xOffset) {
-    const sizes = [{ r: 0.68, h: 0.16 }, { r: 0.55, h: 0.13 }, { r: 0.44, h: 0.11 }];
-    let x = xOffset;
-    const dir = xOffset > 0 ? 1 : -1;
-    sizes.forEach(({ r, h }) => {
-      const mesh = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, 32), plateMat);
-      mesh.rotation.z = Math.PI / 2;
-      mesh.position.x = x + dir * (h / 2);
-      group.add(mesh);
-
-      const edge = new THREE.Mesh(new THREE.TorusGeometry(r, 0.022, 8, 32), metalMat);
-      edge.position.x = x + dir * (h / 2);
-      edge.rotation.y = Math.PI / 2;
-      group.add(edge);
-
-      const hole = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.035, 8, 20), darkMat);
-      hole.position.x = x + dir * (h / 2);
-      hole.rotation.y = Math.PI / 2;
-      group.add(hole);
-
-      x += dir * (h + 0.035);
-    });
-    const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.2, 24), darkMat);
-    collar.rotation.z = Math.PI / 2;
-    collar.position.x = x + dir * 0.1;
-    group.add(collar);
-  }
-
-  addPlates( 1.05);
-  addPlates(-1.05);
-
-  group.rotation.x =  0.18;
-  group.rotation.y = -0.25;
-  scene.add(group);
-
-  /* Lights */
-  const key = new THREE.DirectionalLight(0x9daaff, 4);
-  key.position.set(-3, 4, 3);
-  scene.add(key);
-
-  const fill = new THREE.DirectionalLight(0x4f46e5, 2);
-  fill.position.set(4, 1, 1);
-  scene.add(fill);
-
-  const rim = new THREE.DirectionalLight(0x06b6d4, 1.5);
-  rim.position.set(0, -2, -4);
-  scene.add(rim);
-
-  scene.add(new THREE.AmbientLight(0x1e1b4b, 2));
-
-  const glow = new THREE.PointLight(0x6366f1, 2.5, 5);
-  glow.position.set(0, -0.5, 0);
-  scene.add(glow);
-
-  let mx = 0, my = 0;
-  const onMouse = (e) => {
-    mx = (e.clientX / window.innerWidth  - 0.5) * 2;
-    my = (e.clientY / window.innerHeight - 0.5) * 2;
-  };
-  window.addEventListener('mousemove', onMouse);
-
-  let raf;
-  const clock = new THREE.Clock();
-  function animate() {
-    raf = requestAnimationFrame(animate);
-    const t = clock.getElapsedTime();
-    group.rotation.y  = -0.25 + t * 0.22;
-    group.position.y  = Math.sin(t * 0.7) * 0.07;
-    group.rotation.x  = 0.18 + my * 0.08;
-    group.rotation.z  = mx * 0.04;
-    glow.intensity    = 2.2 + Math.sin(t * 1.8) * 0.6;
-    renderer.render(scene, camera);
-  }
-  animate();
-
-  const onResize = () => {
-    const w = canvas.clientWidth, h = canvas.clientHeight;
-    renderer.setSize(w, h);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-  };
-  window.addEventListener('resize', onResize);
-
-  return () => {
-    cancelAnimationFrame(raf);
-    window.removeEventListener('mousemove', onMouse);
-    window.removeEventListener('resize', onResize);
-    renderer.dispose();
-  };
+    </div>
+  );
 }
 
 /* ── Login Component ────────────────────────────────────────── */
@@ -132,7 +113,6 @@ export default function Login() {
   const { signIn, loading } = useAuth();
   const navigate  = useNavigate();
   const location  = useLocation();
-  const canvasRef = useRef(null);
 
   const [email,    setEmail]    = useState('');
   const [password, setPassword] = useState('');
@@ -141,15 +121,6 @@ export default function Login() {
   const [showPass, setShowPass] = useState(false);
 
   const from = location.state?.from?.pathname ?? null;
-
-  useEffect(() => {
-    if (!canvasRef.current) return;
-    const timer = setTimeout(() => {
-      const cleanup = initDumbbellScene(canvasRef.current);
-      return cleanup;
-    }, 120);
-    return () => clearTimeout(timer);
-  }, []);
 
   function roleHome(role) {
     if (role === 'admin')   return '/admin/dashboard';
@@ -196,47 +167,40 @@ export default function Login() {
     <div className="login-split">
 
       {/* ══════════════════════════════════════════════════════
-          LEFT PANEL — minimal premium 3D redesign
+          LEFT PANEL — ERP dashboard visualization
           ══════════════════════════════════════════════════════ */}
       <div className="login-panel-left">
         <div className="login-blob login-blob--1" />
         <div className="login-blob login-blob--2" />
         <div className="login-grid-overlay" />
 
-        <div className="login-panel-left-inner login-panel-left-inner--centered">
+        <div className="login-panel-left-inner login-panel-erp">
 
-          {/* Brand */}
-          <div className="login-brand login-brand--top">
+          {/* Brand top-left */}
+          <div className="login-brand">
             <div className="login-brand-icon">
               <Dumbbell size={20} color="#fff" />
             </div>
             <span className="login-brand-name">FitGym</span>
           </div>
 
-          {/* 3D centerpiece */}
-          <div className="login-3d-wrap">
-            <div className="login-ring login-ring--outer" />
-            <div className="login-ring login-ring--mid"   />
-            <div className="login-ring login-ring--inner" />
-            <div className="login-glow-disc" />
-            <canvas ref={canvasRef} className="login-3d-canvas" />
-            <div className="login-orbit">
-              <div className="login-orbit-dot login-orbit-dot--1" />
-              <div className="login-orbit-dot login-orbit-dot--2" />
-              <div className="login-orbit-dot login-orbit-dot--3" />
-            </div>
-          </div>
-
-          {/* Text */}
-          <div className="login-left-text">
-            <h1 className="login-left-headline">
-              One Gym.<br />One System.
+          {/* Main headline */}
+          <div className="login-erp-headline">
+            <h1 className="login-erp-title">
+              RUN YOUR GYM.<br />
+              <span className="login-erp-accent">SMARTER.</span>
             </h1>
-            <p className="login-left-tagline">Manage. Track. Grow.</p>
+            <p className="login-erp-sub">
+              Everything your gym needs. In one place.
+            </p>
           </div>
 
-          <p className="login-left-footer">
-            Gym Management &bull; Simplified
+          {/* ERP Visualization */}
+          <ERPVisualization />
+
+          {/* Footer */}
+          <p className="login-erp-footer">
+            © {new Date().getFullYear()} FitGym ERP
           </p>
 
         </div>
