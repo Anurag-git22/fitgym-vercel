@@ -7,6 +7,7 @@ import DashboardLayout  from './components/layout/DashboardLayout';
 import LandingPage    from './pages/landing/LandingPage';
 import Login          from './pages/Login';
 import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword  from './pages/ResetPassword';
 import Forbidden      from './pages/Forbidden';
 import NotFound       from './pages/NotFound';
 
@@ -81,6 +82,7 @@ export default function App() {
           {/* ── Public ──────────────────────────────────────── */}
           <Route path="/login"           element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password"  element={<ResetPassword />} />
           <Route path="/403"             element={<Forbidden />} />
           <Route path="/404"             element={<NotFound />} />
 
