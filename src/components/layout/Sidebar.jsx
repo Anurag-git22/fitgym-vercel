@@ -114,7 +114,6 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
         {!collapsed && (
           <>
             <span className="sidebar-brand-name">FitGym</span>
-            <span className="sidebar-brand-badge">SaaS</span>
           </>
         )}
       </div>
