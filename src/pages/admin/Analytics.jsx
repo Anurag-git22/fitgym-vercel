@@ -77,7 +77,7 @@ export default function AdminAnalytics() {
     <div>
       <div className="page-header"><h2>Analytics</h2></div>
 
-      <div className="stat-grid" style={{ marginBottom: '1.5rem' }}>
+      <div className="stat-grid" style={{ marginBottom: '1.5rem', gridTemplateColumns: 'repeat(2, 1fr)' }}>
         <StatCard label="Total Revenue"      value={currency(kpis?.totalRevenue)}  icon="💰" color="green"  loading={kpiLoading} />
         <StatCard label="Pending Revenue"    value={currency(kpis?.pendingAmt)}    icon="⏳" color="orange" loading={kpiLoading} />
         <StatCard label="Active Memberships" value={kpis?.activeM ?? '—'}          icon="🪪" color="blue"   loading={kpiLoading} />
