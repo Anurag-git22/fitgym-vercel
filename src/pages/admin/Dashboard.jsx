@@ -242,7 +242,7 @@ export default function AdminDashboard() {
           <Chart
             type="area"
             data={revenueChart ?? []}
-            series={[{ key: 'Revenue', label: 'Gross Revenue ($)', color: '#06b6d4' }]}
+            series={[{ key: 'Revenue', label: 'Gross Revenue (₹)', color: '#06b6d4' }]}
             xKey="name"
             height={260}
             loading={chartLoading}

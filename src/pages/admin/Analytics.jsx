@@ -89,7 +89,7 @@ export default function AdminAnalytics() {
           <Chart
             type="bar"
             data={revenueData ?? []}
-            series={[{ key: 'Revenue', label: 'Revenue ($)', color: '#10b981' }]}
+            series={[{ key: 'Revenue', label: 'Revenue (₹)', color: '#10b981' }]}
             xKey="name"
             height={280}
             loading={revLoading}

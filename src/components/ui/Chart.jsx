@@ -31,7 +31,7 @@ const CustomTooltip = ({ active, payload, label }) => {
             <span style={{ color: 'var(--text-secondary)' }}>{entry.name}:</span>
             <span style={{ fontWeight: 700, color: '#ffffff' }}>
               {typeof entry.value === 'number' && entry.name.toLowerCase().includes('revenue')
-                ? `$${entry.value.toLocaleString()}`
+                ? `₹${entry.value.toLocaleString('en-IN')}`
                 : entry.value?.toLocaleString() ?? entry.value}
             </span>
           </div>
