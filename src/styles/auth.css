@@ -639,3 +639,187 @@
     justify-content: flex-start;
   }
 }
+
+/* ════════════════════════════════════════════════════════════
+   LOGIN LEFT PANEL — 3D DUMBBELL REDESIGN
+   ════════════════════════════════════════════════════════════ */
+
+/* Subtle futuristic grid overlay */
+.login-grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+}
+
+/* Centered inner layout */
+.login-panel-left-inner--centered {
+  align-items: center;
+  text-align: center;
+  gap: 0 !important;
+}
+
+/* Brand pinned to top */
+.login-brand--top {
+  align-self: flex-start;
+  margin-bottom: auto;
+}
+
+/* ── 3D canvas wrap ─────────────────────────────────────────── */
+.login-3d-wrap {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem auto;
+  flex-shrink: 0;
+}
+
+.login-3d-canvas {
+  width: 260px !important;
+  height: 260px !important;
+  position: relative;
+  z-index: 2;
+}
+
+/* Glow disc behind dumbbell */
+.login-glow-disc {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99,102,241,0.25) 0%, rgba(6,182,212,0.1) 50%, transparent 70%);
+  filter: blur(20px);
+  z-index: 1;
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50%       { opacity: 1.0; transform: scale(1.1); }
+}
+
+/* Energy rings */
+.login-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid;
+  z-index: 1;
+}
+
+.login-ring--outer {
+  width: 290px;
+  height: 290px;
+  border-color: rgba(99, 102, 241, 0.15);
+  animation: ring-rotate 12s linear infinite;
+}
+
+.login-ring--mid {
+  width: 245px;
+  height: 245px;
+  border-color: rgba(6, 182, 212, 0.12);
+  animation: ring-rotate 8s linear infinite reverse;
+  border-style: dashed;
+}
+
+.login-ring--inner {
+  width: 200px;
+  height: 200px;
+  border-color: rgba(139, 157, 255, 0.18);
+  animation: ring-rotate 16s linear infinite;
+}
+
+@keyframes ring-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Orbit dots */
+.login-orbit {
+  position: absolute;
+  width: 290px;
+  height: 290px;
+  animation: ring-rotate 6s linear infinite;
+  z-index: 3;
+}
+
+.login-orbit-dot {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.login-orbit-dot--1 {
+  width: 7px;
+  height: 7px;
+  background: #818cf8;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 0 10px rgba(129,140,248,0.8);
+}
+
+.login-orbit-dot--2 {
+  width: 5px;
+  height: 5px;
+  background: #06b6d4;
+  bottom: 12px;
+  left: 18%;
+  box-shadow: 0 0 8px rgba(6,182,212,0.8);
+}
+
+.login-orbit-dot--3 {
+  width: 5px;
+  height: 5px;
+  background: #a78bfa;
+  bottom: 12px;
+  right: 18%;
+  box-shadow: 0 0 8px rgba(167,139,250,0.8);
+}
+
+/* ── Left panel text ────────────────────────────────────────── */
+.login-left-text {
+  margin-bottom: 1rem;
+}
+
+.login-left-headline {
+  font-size: clamp(2rem, 3vw, 2.6rem);
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0 0 0.5rem;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+}
+
+.login-left-tagline {
+  font-size: 1rem;
+  font-weight: 500;
+  color: rgba(148, 163, 184, 0.7);
+  margin: 0;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+.login-left-footer {
+  font-size: 0.72rem;
+  color: rgba(100, 116, 139, 0.55);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 0;
+  margin-top: auto;
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .login-ring,
+  .login-orbit,
+  .login-glow-disc { animation: none; }
+}
