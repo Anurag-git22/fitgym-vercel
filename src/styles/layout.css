@@ -771,3 +771,171 @@
 .topbar-search input {
   transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
+
+/* ════════════════════════════════════════════════════════════
+   NOTIFICATION DROPDOWN (Trainer & Trainee)
+   ════════════════════════════════════════════════════════════ */
+
+.topbar-notif-wrap {
+  position: relative;
+}
+
+.notif-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 340px;
+  background: var(--bg-surface);
+  border: var(--border-glass);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(99,102,241,0.1);
+  z-index: 500;
+  overflow: hidden;
+  animation: dropdown-in 0.18s cubic-bezier(0.16,1,0.3,1);
+}
+
+@keyframes dropdown-in {
+  from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+.notif-dropdown-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.1rem 0.75rem;
+  border-bottom: var(--border-glass);
+}
+
+.notif-dropdown-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.notif-mark-all {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.notif-mark-all:hover {
+  background: var(--primary-glow);
+}
+
+.notif-dropdown-body {
+  max-height: 320px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.notif-dropdown-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 2.5rem 1rem;
+  color: var(--text-muted);
+}
+
+.notif-dropdown-empty p {
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.notif-dropdown-item {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.85rem 1.1rem;
+  border-bottom: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.notif-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.notif-dropdown-item:hover {
+  background: var(--bg-card-hover);
+}
+
+.notif-dropdown-item--unread {
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.notif-dropdown-item--unread:hover {
+  background: rgba(99, 102, 241, 0.1);
+}
+
+.notif-dropdown-dot-wrap {
+  width: 18px;
+  display: flex;
+  align-items: flex-start;
+  padding-top: 3px;
+  flex-shrink: 0;
+}
+
+.notif-dropdown-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 6px var(--primary-glow);
+  flex-shrink: 0;
+}
+
+.notif-dropdown-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notif-dropdown-msg {
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  margin: 0 0 0.3rem;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.notif-dropdown-time {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+/* Light theme overrides */
+[data-theme="light"] .notif-dropdown {
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+}
+
+[data-theme="light"] .notif-dropdown-header {
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+[data-theme="light"] .notif-dropdown-item {
+  border-bottom-color: rgba(0,0,0,0.04);
+}
+
+[data-theme="light"] .notif-dropdown-item:hover {
+  background: #f8fafc;
+}
+
+[data-theme="light"] .notif-dropdown-item--unread {
+  background: #f5f3ff;
+}
+
+[data-theme="light"] .notif-dropdown-item--unread:hover {
+  background: #ede9fe;
+}
