@@ -75,7 +75,9 @@ export default function TrainerProfile() {
     const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
     if (upErr) { setProfileErr(upErr.message); return; }
     const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(path);
-    await supabase.from('profiles').update({ avatar_url: urlData.publicUrl }).eq('id', profile.id);
+    // Add cache-busting timestamp so browser loads the new image immediately
+    const avatarUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+    await supabase.from('profiles').update({ avatar_url: avatarUrl }).eq('id', profile.id);
     setProfileMsg('Avatar updated.');
     refreshProfile();
   }
