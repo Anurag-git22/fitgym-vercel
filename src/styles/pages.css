@@ -531,3 +531,69 @@
   .hero-title { font-size: 1.6rem; }
   .dashboard-hero-section { padding: 1.25rem; }
 }
+
+/* ════════════════════════════════════════════════════════════
+   LIGHT THEME OVERRIDES — pages
+   ════════════════════════════════════════════════════════════ */
+
+[data-theme="light"] .simple-list-item {
+  background: #f8fafc;
+  color: #374151;
+}
+
+[data-theme="light"] .tab-btn {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  color: #475569;
+}
+
+[data-theme="light"] .tab-btn:hover {
+  background: #f1f5f9;
+}
+
+[data-theme="light"] .tab-btn--active {
+  background: #4f46e5;
+  border-color: #4f46e5;
+  color: #ffffff;
+}
+
+[data-theme="light"] .notif-item {
+  border-bottom-color: #f1f5f9;
+}
+
+[data-theme="light"] .notif-item--unread {
+  background: #fafbff;
+  border-left-color: #4f46e5;
+}
+
+[data-theme="light"] .notif-name  { color: #0f172a; }
+[data-theme="light"] .notif-time  { color: #94a3b8; }
+[data-theme="light"] .notif-message { color: #475569; }
+
+[data-theme="light"] .workout-exercise-card {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+[data-theme="light"] .workout-exercise-name { color: #0f172a; }
+[data-theme="light"] .workout-exercise-meta { color: #64748b; }
+
+[data-theme="light"] .detail-dl dt { color: #64748b; }
+[data-theme="light"] .detail-dl dd { color: #0f172a; }
+
+[data-theme="light"] .membership-hero {
+  background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+}
+
+[data-theme="light"] .plan-selector-btn {
+  color: #374151;
+}
+
+[data-theme="light"] .plan-selector-btn:hover {
+  background: #f1f5f9;
+}
+
+[data-theme="light"] .plan-selector-btn--active {
+  background: #eef2ff;
+  color: #4338ca;
+}

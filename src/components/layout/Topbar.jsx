@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Bell, Search, Menu, ChevronRight } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
+import { Bell, Search, Menu, ChevronRight, Sun, Moon } from 'lucide-react';
 
 /* Map pathname segments to readable titles */
 const ROUTE_TITLES = {
@@ -31,6 +32,7 @@ function getPageDetails(pathname) {
 
 export default function Topbar({ onMenuToggle }) {
   const { profile, role } = useAuth();
+  const { theme, toggle } = useTheme();
   const location = useLocation();
   const { portal, pageTitle } = getPageDetails(location.pathname);
   const [timeStr, setTimeStr] = useState('');
@@ -102,6 +104,19 @@ export default function Topbar({ onMenuToggle }) {
             <span className="topbar-badge-count">3</span>
           </Link>
         )}
+
+        {/* Theme toggle */}
+        <button
+          className="topbar-icon-btn theme-toggle-btn"
+          onClick={toggle}
+          aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+          title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+        >
+          {theme === 'dark'
+            ? <Sun size={18} />
+            : <Moon size={18} />
+          }
+        </button>
 
         {profile && (
           <div className="topbar-avatar-wrap">
