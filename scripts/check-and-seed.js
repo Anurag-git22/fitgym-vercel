@@ -16,15 +16,15 @@ const addDays = (d, n) => { const dt = new Date(d); dt.setDate(dt.getDate()+n); 
 const today = new Date().toISOString().slice(0,10);
 
 const USERS = [
-  { email: 'admin@fitgym.net',    password: 'Admin@123',   name: 'Alex Admin',     role: 'admin'   },
-  { email: 'trainer1@fitgym.net', password: 'Trainer@123', name: 'Sam Trainer',    role: 'trainer' },
-  { email: 'trainer2@fitgym.net', password: 'Trainer@123', name: 'Jordan Trainer', role: 'trainer' },
-  { email: 'trainee1@fitgym.net', password: 'Trainee@123', name: 'Alice Trainee',  role: 'trainee' },
-  { email: 'trainee2@fitgym.net', password: 'Trainee@123', name: 'Bob Trainee',    role: 'trainee' },
-  { email: 'trainee3@fitgym.net', password: 'Trainee@123', name: 'Carol Trainee',  role: 'trainee' },
-  { email: 'trainee4@fitgym.net', password: 'Trainee@123', name: 'Dan Trainee',    role: 'trainee' },
-  { email: 'trainee5@fitgym.net', password: 'Trainee@123', name: 'Eva Trainee',    role: 'trainee' },
-  { email: 'trainee6@fitgym.net', password: 'Trainee@123', name: 'Frank Trainee',  role: 'trainee' },
+  { email: 'admin@fitgym.net',    password: 'Admin@123',   name: 'A',     role: 'admin'   },
+  { email: 'trainer1@fitgym.net', password: 'Trainer@123', name: 'B',    role: 'trainer' },
+  { email: 'trainer2@fitgym.net', password: 'Trainer@123', name: 'C', role: 'trainer' },
+  { email: 'trainee1@fitgym.net', password: 'Trainee@123', name: 'D',  role: 'trainee' },
+  { email: 'trainee2@fitgym.net', password: 'Trainee@123', name: 'E',    role: 'trainee' },
+  { email: 'trainee3@fitgym.net', password: 'Trainee@123', name: 'F',  role: 'trainee' },
+  { email: 'trainee4@fitgym.net', password: 'Trainee@123', name: 'G',    role: 'trainee' },
+  { email: 'trainee5@fitgym.net', password: 'Trainee@123', name: 'H',    role: 'trainee' },
+  { email: 'trainee6@fitgym.net', password: 'Trainee@123', name: 'I',  role: 'trainee' },
 ];
 
 // Step 1: List and delete any existing broken users

@@ -48,44 +48,44 @@ values (
   'admin@fitgym.com',
   crypt('Admin@123', gen_salt('bf')),
   now(),
-  '{"name":"Alex Admin","role":"admin"}'::jsonb,
+  '{"name":"A","role":"admin"}'::jsonb,
   now(), now(), 'authenticated', 'authenticated', '', ''
 )
 on conflict (id) do nothing;
 
 -- Trainer 1
 insert into auth.users (id,email,encrypted_password,email_confirmed_at,raw_user_meta_data,created_at,updated_at,aud,role,confirmation_token,recovery_token)
-values ('bbbbbbbb-0000-0000-0000-000000000001','trainer1@fitgym.com',crypt('Trainer@123',gen_salt('bf')),now(),'{"name":"Sam Trainer","role":"trainer"}'::jsonb,now(),now(),'authenticated','authenticated','','')
+values ('bbbbbbbb-0000-0000-0000-000000000001','trainer1@fitgym.com',crypt('Trainer@123',gen_salt('bf')),now(),'{"name":"B","role":"trainer"}'::jsonb,now(),now(),'authenticated','authenticated','','')
 on conflict (id) do nothing;
 
 -- Trainer 2
 insert into auth.users (id,email,encrypted_password,email_confirmed_at,raw_user_meta_data,created_at,updated_at,aud,role,confirmation_token,recovery_token)
-values ('bbbbbbbb-0000-0000-0000-000000000002','trainer2@fitgym.com',crypt('Trainer@123',gen_salt('bf')),now(),'{"name":"Jordan Trainer","role":"trainer"}'::jsonb,now(),now(),'authenticated','authenticated','','')
+values ('bbbbbbbb-0000-0000-0000-000000000002','trainer2@fitgym.com',crypt('Trainer@123',gen_salt('bf')),now(),'{"name":"C","role":"trainer"}'::jsonb,now(),now(),'authenticated','authenticated','','')
 on conflict (id) do nothing;
 
 -- Trainee 1–6
 insert into auth.users (id,email,encrypted_password,email_confirmed_at,raw_user_meta_data,created_at,updated_at,aud,role,confirmation_token,recovery_token) values
-('cccccccc-0000-0000-0000-000000000001','trainee1@fitgym.com',crypt('Trainee@123',gen_salt('bf')),now(),'{"name":"Alice Trainee","role":"trainee"}'::jsonb,now(),now(),'authenticated','authenticated','',''),
-('cccccccc-0000-0000-0000-000000000002','trainee2@fitgym.com',crypt('Trainee@123',gen_salt('bf')),now(),'{"name":"Bob Trainee","role":"trainee"}'::jsonb,now(),now(),'authenticated','authenticated','',''),
-('cccccccc-0000-0000-0000-000000000003','trainee3@fitgym.com',crypt('Trainee@123',gen_salt('bf')),now(),'{"name":"Carol Trainee","role":"trainee"}'::jsonb,now(),now(),'authenticated','authenticated','',''),
-('cccccccc-0000-0000-0000-000000000004','trainee4@fitgym.com',crypt('Trainee@123',gen_salt('bf')),now(),'{"name":"Dan Trainee","role":"trainee"}'::jsonb,now(),now(),'authenticated','authenticated','',''),
-('cccccccc-0000-0000-0000-000000000005','trainee5@fitgym.com',crypt('Trainee@123',gen_salt('bf')),now(),'{"name":"Eva Trainee","role":"trainee"}'::jsonb,now(),now(),'authenticated','authenticated','',''),
-('cccccccc-0000-0000-0000-000000000006','trainee6@fitgym.com',crypt('Trainee@123',gen_salt('bf')),now(),'{"name":"Frank Trainee","role":"trainee"}'::jsonb,now(),now(),'authenticated','authenticated','','')
+('cccccccc-0000-0000-0000-000000000001','trainee1@fitgym.com',crypt('Trainee@123',gen_salt('bf')),now(),'{"name":"D","role":"trainee"}'::jsonb,now(),now(),'authenticated','authenticated','',''),
+('cccccccc-0000-0000-0000-000000000002','trainee2@fitgym.com',crypt('Trainee@123',gen_salt('bf')),now(),'{"name":"E","role":"trainee"}'::jsonb,now(),now(),'authenticated','authenticated','',''),
+('cccccccc-0000-0000-0000-000000000003','trainee3@fitgym.com',crypt('Trainee@123',gen_salt('bf')),now(),'{"name":"F","role":"trainee"}'::jsonb,now(),now(),'authenticated','authenticated','',''),
+('cccccccc-0000-0000-0000-000000000004','trainee4@fitgym.com',crypt('Trainee@123',gen_salt('bf')),now(),'{"name":"G","role":"trainee"}'::jsonb,now(),now(),'authenticated','authenticated','',''),
+('cccccccc-0000-0000-0000-000000000005','trainee5@fitgym.com',crypt('Trainee@123',gen_salt('bf')),now(),'{"name":"H","role":"trainee"}'::jsonb,now(),now(),'authenticated','authenticated','',''),
+('cccccccc-0000-0000-0000-000000000006','trainee6@fitgym.com',crypt('Trainee@123',gen_salt('bf')),now(),'{"name":"I","role":"trainee"}'::jsonb,now(),now(),'authenticated','authenticated','','')
 on conflict (id) do nothing;
 
 -- ────────────────────────────────────────────────────────────
 -- 2. Profiles (trigger should have created these; upsert to be safe)
 -- ────────────────────────────────────────────────────────────
 insert into public.profiles (id, name, email, role) values
-('aaaaaaaa-0000-0000-0000-000000000001','Alex Admin',    'admin@fitgym.com',    'admin'),
-('bbbbbbbb-0000-0000-0000-000000000001','Sam Trainer',   'trainer1@fitgym.com', 'trainer'),
-('bbbbbbbb-0000-0000-0000-000000000002','Jordan Trainer','trainer2@fitgym.com', 'trainer'),
-('cccccccc-0000-0000-0000-000000000001','Alice Trainee', 'trainee1@fitgym.com', 'trainee'),
-('cccccccc-0000-0000-0000-000000000002','Bob Trainee',   'trainee2@fitgym.com', 'trainee'),
-('cccccccc-0000-0000-0000-000000000003','Carol Trainee', 'trainee3@fitgym.com', 'trainee'),
-('cccccccc-0000-0000-0000-000000000004','Dan Trainee',   'trainee4@fitgym.com', 'trainee'),
-('cccccccc-0000-0000-0000-000000000005','Eva Trainee',   'trainee5@fitgym.com', 'trainee'),
-('cccccccc-0000-0000-0000-000000000006','Frank Trainee', 'trainee6@fitgym.com', 'trainee')
+('aaaaaaaa-0000-0000-0000-000000000001','A',    'admin@fitgym.com',    'admin'),
+('bbbbbbbb-0000-0000-0000-000000000001','B',   'trainer1@fitgym.com', 'trainer'),
+('bbbbbbbb-0000-0000-0000-000000000002','C','trainer2@fitgym.com', 'trainer'),
+('cccccccc-0000-0000-0000-000000000001','D', 'trainee1@fitgym.com', 'trainee'),
+('cccccccc-0000-0000-0000-000000000002','E',   'trainee2@fitgym.com', 'trainee'),
+('cccccccc-0000-0000-0000-000000000003','F', 'trainee3@fitgym.com', 'trainee'),
+('cccccccc-0000-0000-0000-000000000004','G',   'trainee4@fitgym.com', 'trainee'),
+('cccccccc-0000-0000-0000-000000000005','H',   'trainee5@fitgym.com', 'trainee'),
+('cccccccc-0000-0000-0000-000000000006','I', 'trainee6@fitgym.com', 'trainee')
 on conflict (id) do update set name=excluded.name, email=excluded.email, role=excluded.role;
 
 -- ────────────────────────────────────────────────────────────
