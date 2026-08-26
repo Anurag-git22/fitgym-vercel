@@ -1,12 +1,16 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { useSupabaseQuery } from '../../hooks/useSupabaseQuery';
 import Card  from '../../components/ui/Card';
 import Table from '../../components/ui/Table';
 import Modal from '../../components/ui/Modal';
 import Badge from '../../components/ui/Badge';
+import { Search } from 'lucide-react';
+import { Pagination } from './Payments';
 
 function today() { return new Date().toISOString().slice(0, 10); }
+
+const PAGE_SIZE = 10;
 
 export default function AdminAttendance() {
   const [dateFilter, setDateFilter] = useState(today());
@@ -15,6 +19,8 @@ export default function AdminAttendance() {
   const [target, setTarget] = useState(null);
   const [busy,   setBusy]   = useState(false);
   const [error,  setError]  = useState('');
+  const [search, setSearch] = useState('');
+  const [page,   setPage]   = useState(1);
 
   const { data, loading, refetch } = useSupabaseQuery(() =>
     supabase
@@ -87,6 +93,18 @@ export default function AdminAttendance() {
   const present = (data ?? []).filter(r => r.status === 'present').length;
   const absent  = (data ?? []).filter(r => r.status === 'absent').length;
 
+  /* Search + pagination */
+  const filtered = useMemo(() => {
+    if (!search.trim()) return data ?? [];
+    const q = search.toLowerCase();
+    return (data ?? []).filter(r =>
+      r.trainees?.profiles?.name?.toLowerCase().includes(q)
+    );
+  }, [data, search]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const paginated  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
   return (
     <div>
       <div className="page-header">
@@ -94,20 +112,34 @@ export default function AdminAttendance() {
         <button className="btn btn-primary" onClick={openAdd}>+ Mark Attendance</button>
       </div>
 
-      {/* Date filter + summary */}
-      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap' }}>
-        <div className="form-group" style={{ margin: 0 }}>
-          <label style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '0.25rem', display: 'block' }}>Filter by date</label>
-          <input type="date" value={dateFilter} onChange={e => setDateFilter(e.target.value)} style={{ padding: '0.5rem 0.75rem', borderRadius: 8, border: '1.5px solid #d1d5db', fontSize: '0.9rem' }} />
+      {/* Date filter + search + summary */}
+      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          <div className="form-group" style={{ margin: 0 }}>
+            <label style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '0.25rem', display: 'block' }}>Filter by date</label>
+            <input type="date" value={dateFilter} onChange={e => { setDateFilter(e.target.value); setPage(1); }}
+              style={{ padding: '0.5rem 0.75rem', borderRadius: 8, border: '1.5px solid #d1d5db', fontSize: '0.9rem' }} />
+          </div>
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-end', paddingBottom: '2px' }}>
+            <span className="badge badge--green">Present: {present}</span>
+            <span className="badge badge--red">Absent: {absent}</span>
+          </div>
         </div>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <span className="badge badge--green">Present: {present}</span>
-          <span className="badge badge--red">Absent: {absent}</span>
+        <div className="table-search-wrap">
+          <Search size={14} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+          <input
+            type="text"
+            placeholder="Search by trainee name…"
+            value={search}
+            onChange={e => { setSearch(e.target.value); setPage(1); }}
+            className="table-search-input"
+          />
         </div>
       </div>
 
       <Card padding={false}>
-        <Table columns={columns} data={data ?? []} loading={loading} emptyMsg="No attendance records for this date." />
+        <Table columns={columns} data={paginated} loading={loading} emptyMsg="No attendance records for this date." />
+        <Pagination page={page} totalPages={totalPages} onChange={setPage} total={filtered.length} pageSize={PAGE_SIZE} />
       </Card>
 
       {/* Add */}

@@ -29,6 +29,7 @@ import TrainerTraineeDetail from './pages/trainer/TraineeDetail';
 import TrainerWorkouts     from './pages/trainer/Workouts';
 import TrainerAttendance   from './pages/trainer/Attendance';
 import TrainerProgress     from './pages/trainer/Progress';
+import TrainerProfile      from './pages/trainer/Profile';
 
 /* ── Trainee pages ──────────────────────────────────────────── */
 import TraineeDashboard  from './pages/trainee/Dashboard';
@@ -110,6 +111,7 @@ export default function App() {
             <Route path="/trainer/workouts"        element={<WithLayout><TrainerWorkouts /></WithLayout>} />
             <Route path="/trainer/attendance"      element={<WithLayout><TrainerAttendance /></WithLayout>} />
             <Route path="/trainer/progress"        element={<WithLayout><TrainerProgress /></WithLayout>} />
+            <Route path="/trainer/profile"         element={<WithLayout><TrainerProfile /></WithLayout>} />
           </Route>
 
           {/* ── Trainee ────────────────────────────────────── */}

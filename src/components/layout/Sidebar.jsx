@@ -61,6 +61,12 @@ const NAV_CONFIG = {
         { to: '/trainer/attendance', icon: CalendarCheck, label: 'Attendance' },
         { to: '/trainer/progress', icon: TrendingUp, label: 'Progress Tracking' },
       ]
+    },
+    {
+      category: 'Account',
+      items: [
+        { to: '/trainer/profile', icon: User, label: 'My Profile' },
+      ]
     }
   ],
   trainee: [

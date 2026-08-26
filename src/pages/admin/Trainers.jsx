@@ -7,16 +7,20 @@ import Modal from '../../components/ui/Modal';
 import Badge from '../../components/ui/Badge';
 import EmptyState from '../../components/ui/EmptyState';
 import { UserCheck, UserPlus, Search, Edit2, Power } from 'lucide-react';
+import { Pagination } from '../admin/Payments';
+
+const PAGE_SIZE = 10;
 
 const INIT = { name: '', email: '', password: '', phone: '', specialization: '', joining_date: '' };
 
 export default function AdminTrainers() {
-  const [modal, setModal] = useState(null); // null | 'add' | 'edit' | 'delete'
+  const [modal, setModal] = useState(null);
   const [form, setForm] = useState(INIT);
   const [target, setTarget] = useState(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
 
   const { data: trainers, loading, refetch } = useSupabaseQuery(() =>
     supabase
@@ -35,6 +39,9 @@ export default function AdminTrainers() {
       t.specialization?.toLowerCase().includes(q)
     );
   }, [trainers, search]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredTrainers.length / PAGE_SIZE));
+  const paginated  = filteredTrainers.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   /* ── Handlers ─────────────────────────────────────────────── */
   function openAdd() { setForm(INIT); setError(''); setModal('add'); }
@@ -206,7 +213,7 @@ export default function AdminTrainers() {
             type="text"
             placeholder="Search trainers by name, email, or discipline..."
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={e => { setSearch(e.target.value); setPage(1); }}
             style={{
               background: 'transparent',
               border: 'none',
@@ -226,7 +233,10 @@ export default function AdminTrainers() {
             action={<button className="btn btn-primary" onClick={openAdd}><UserPlus size={16} /><span>Add Trainer</span></button>}
           />
         ) : (
-          <Table columns={columns} data={filteredTrainers} loading={loading} emptyMsg="No trainers match your search criteria." />
+          <>
+            <Table columns={columns} data={paginated} loading={loading} emptyMsg="No trainers match your search criteria." />
+            <Pagination page={page} totalPages={totalPages} onChange={setPage} total={filteredTrainers.length} pageSize={PAGE_SIZE} />
+          </>
         )}
       </Card>
 

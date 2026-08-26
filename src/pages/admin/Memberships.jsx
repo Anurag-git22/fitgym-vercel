@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { useSupabaseQuery } from '../../hooks/useSupabaseQuery';
 import Card       from '../../components/ui/Card';
@@ -6,6 +6,10 @@ import Table      from '../../components/ui/Table';
 import Modal      from '../../components/ui/Modal';
 import Badge      from '../../components/ui/Badge';
 import EmptyState from '../../components/ui/EmptyState';
+import { Search } from 'lucide-react';
+import { Pagination } from '../admin/Payments';
+
+const PAGE_SIZE = 10;
 
 const INIT = { trainee_id: '', plan_id: '', plan: '', start_date: '', end_date: '', status: 'active', price: '' };
 
@@ -28,6 +32,8 @@ export default function AdminMemberships() {
   const [target, setTarget] = useState(null);
   const [busy,   setBusy]   = useState(false);
   const [error,  setError]  = useState('');
+  const [search, setSearch] = useState('');
+  const [page,   setPage]   = useState(1);
 
   /* Fetch memberships */
   const { data, loading, refetch } = useSupabaseQuery(() =>
@@ -165,9 +171,33 @@ export default function AdminMemberships() {
         </div>
       </div>
 
-      <Card padding={false}>
-        <Table columns={columns} data={data ?? []} loading={loading} emptyMsg="No memberships yet." />
-      </Card>
+      {/* Search */}
+      <div className="table-search-wrap" style={{ marginBottom: '1rem' }}>
+        <Search size={14} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+        <input
+          type="text"
+          placeholder="Search by trainee name or plan…"
+          value={search}
+          onChange={e => { setSearch(e.target.value); setPage(1); }}
+          className="table-search-input"
+        />
+      </div>
+
+      {(() => {
+        const filtered = (data ?? []).filter(r => {
+          if (!search.trim()) return true;
+          const q = search.toLowerCase();
+          return r.trainees?.profiles?.name?.toLowerCase().includes(q) || r.plan?.toLowerCase().includes(q);
+        });
+        const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+        const paginated  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+        return (
+          <Card padding={false}>
+            <Table columns={columns} data={paginated} loading={loading} emptyMsg="No memberships yet." />
+            <Pagination page={page} totalPages={totalPages} onChange={setPage} total={filtered.length} pageSize={PAGE_SIZE} />
+          </Card>
+        );
+      })()}
 
       {/* ── Add Membership ──────────────────────────────────── */}
       <Modal open={modal === 'add'} onClose={() => setModal(null)} title="New Membership" size="md">

@@ -7,6 +7,9 @@ import Modal from '../../components/ui/Modal';
 import Badge from '../../components/ui/Badge';
 import EmptyState from '../../components/ui/EmptyState';
 import { Users, UserPlus, Search, Edit2, Power } from 'lucide-react';
+import { Pagination } from '../admin/Payments';
+
+const PAGE_SIZE = 10;
 
 const INIT = { name: '', email: '', password: '', phone: '', date_of_birth: '', trainer_id: '' };
 
@@ -17,6 +20,7 @@ export default function AdminTrainees() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
 
   const { data: trainees, loading, refetch } = useSupabaseQuery(() =>
     supabase
@@ -39,6 +43,9 @@ export default function AdminTrainees() {
       t.trainers?.profiles?.name?.toLowerCase().includes(q)
     );
   }, [trainees, search]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredTrainees.length / PAGE_SIZE));
+  const paginated  = filteredTrainees.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   function openAdd() { setForm(INIT); setError(''); setModal('add'); }
 
@@ -218,7 +225,7 @@ export default function AdminTrainees() {
             type="text"
             placeholder="Search trainees by name, email, or assigned trainer..."
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={e => { setSearch(e.target.value); setPage(1); }}
             style={{
               background: 'transparent',
               border: 'none',
@@ -238,7 +245,10 @@ export default function AdminTrainees() {
             action={<button className="btn btn-primary" onClick={openAdd}><UserPlus size={16} /><span>Register Trainee</span></button>}
           />
         ) : (
-          <Table columns={columns} data={filteredTrainees} loading={loading} emptyMsg="No trainees match your search criteria." />
+          <>
+            <Table columns={columns} data={paginated} loading={loading} emptyMsg="No trainees match your search criteria." />
+            <Pagination page={page} totalPages={totalPages} onChange={setPage} total={filteredTrainees.length} pageSize={PAGE_SIZE} />
+          </>
         )}
       </Card>
 

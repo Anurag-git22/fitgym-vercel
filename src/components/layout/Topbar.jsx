@@ -114,6 +114,7 @@ export default function Topbar({ onMenuToggle }) {
 
   const profileLink =
     role === 'trainee' ? '/trainee/profile' :
+    role === 'trainer' ? '/trainer/profile' :
     role === 'admin'   ? '/admin/settings'  :
     null;
 
