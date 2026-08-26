@@ -28,7 +28,8 @@ export default function AdminAttendance() {
     supabase.from('trainees').select('id, profiles(name)'), []);
 
   function openAdd() {
-    setForm({ trainee_id: '', date: dateFilter, status: 'present', check_in_time: '' });
+    const now = new Date().toTimeString().slice(0, 5); // HH:MM
+    setForm({ trainee_id: '', date: dateFilter, status: 'present', check_in_time: now });
     setError(''); setModal('add');
   }
 

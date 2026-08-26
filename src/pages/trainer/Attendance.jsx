@@ -42,7 +42,8 @@ export default function TrainerAttendance() {
   }, [traineeIds.join(','), dateFilter]);
 
   function openAdd() {
-    setForm({ trainee_id: '', date: dateFilter, status: 'present', check_in_time: '' });
+    const now = new Date().toTimeString().slice(0, 5);
+    setForm({ trainee_id: '', date: dateFilter, status: 'present', check_in_time: now });
     setError(''); setModal('add');
   }
 
