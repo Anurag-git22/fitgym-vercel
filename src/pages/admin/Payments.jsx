@@ -21,7 +21,7 @@ export default function AdminPayments() {
   const { data, loading, refetch } = useSupabaseQuery(() =>
     supabase
       .from('payments')
-      .select('*, trainees(id, profiles(name)), memberships(plan)')
+      .select('*, trainees(id, profiles(name, email)), memberships(plan)')
       .order('payment_date', { ascending: false }),
   []);
 
@@ -71,11 +71,27 @@ export default function AdminPayments() {
   );
 
   const columns = [
-    { key: 'trainee', label: 'Trainee',  render: (_, r) => r.trainees?.profiles?.name ?? '—' },
-    { key: 'memberships', label: 'Plan', render: (_, r) => r.memberships?.plan ?? '—' },
-    { key: 'amount',      label: 'Amount',       render: v => currency(v) },
-    { key: 'payment_date',   label: 'Date',      render: v => v },
-    { key: 'payment_status', label: 'Status',    render: v => <Badge status={v} /> },
+    {
+      key: 'trainee', label: 'Trainee / Member',
+      render: (_, r) => {
+        const name  = r.trainees?.profiles?.name;
+        const email = r.trainees?.profiles?.email;
+        return (
+          <div>
+            <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+              {name ?? email ?? '—'}
+            </div>
+            {name && email && (
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{email}</div>
+            )}
+          </div>
+        );
+      }
+    },
+    { key: 'memberships', label: 'Plan',   render: (_, r) => r.memberships?.plan ?? '—' },
+    { key: 'amount',      label: 'Amount', render: v => currency(v) },
+    { key: 'payment_date',   label: 'Payment Date', render: v => v },
+    { key: 'payment_status', label: 'Status',       render: v => <Badge status={v} /> },
     {
       key: 'actions', label: '',
       render: (_, r) => <button className="btn btn-secondary btn-sm" onClick={() => openEdit(r)}>Edit</button>,

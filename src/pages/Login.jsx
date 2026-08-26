@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabaseClient';
-import { Dumbbell, ArrowRight } from 'lucide-react';
+import { Dumbbell, ArrowRight, Sun, Moon } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 /* ── Abstract ERP Dashboard Visualization ───────────────────── */
 function ERPVisualization() {
@@ -111,6 +112,7 @@ function ERPVisualization() {
 /* ── Login Component ────────────────────────────────────────── */
 export default function Login() {
   const { signIn, loading } = useAuth();
+  const { theme, toggle }   = useTheme();
   const navigate  = useNavigate();
   const location  = useLocation();
 
@@ -210,6 +212,16 @@ export default function Login() {
           RIGHT PANEL — unchanged
           ══════════════════════════════════════════════════════ */}
       <div className="login-panel-right">
+        {/* Theme toggle — top right corner */}
+        <button
+          className="login-theme-toggle"
+          onClick={toggle}
+          aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+          title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+        >
+          {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+        </button>
+
         <div className="login-form-wrap">
 
           <div className="login-mobile-brand">

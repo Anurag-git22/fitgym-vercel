@@ -920,3 +920,96 @@
   .erp-panel--center,
   .erp-status-dot { animation: none; }
 }
+
+/* ════════════════════════════════════════════════════════════
+   LOGIN PAGE — THEME TOGGLE BUTTON
+   ════════════════════════════════════════════════════════════ */
+
+.login-theme-toggle {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted, #94a3b8);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+  z-index: 10;
+}
+
+.login-theme-toggle:hover {
+  background: rgba(99, 102, 241, 0.12);
+  color: #6366f1;
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.login-theme-toggle:active {
+  transform: scale(0.9) rotate(15deg);
+}
+
+/* ════════════════════════════════════════════════════════════
+   LIGHT THEME — LOGIN PAGE
+   ════════════════════════════════════════════════════════════ */
+
+[data-theme="light"] .login-panel-right {
+  background: #f8fafc;
+}
+
+[data-theme="light"] .login-theme-toggle {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #64748b;
+}
+
+[data-theme="light"] .login-theme-toggle:hover {
+  background: rgba(79, 70, 229, 0.08);
+  color: #4f46e5;
+  border-color: rgba(79, 70, 229, 0.25);
+}
+
+[data-theme="light"] .login-form-title { color: #0f172a; }
+[data-theme="light"] .login-form-sub   { color: #64748b; }
+
+[data-theme="light"] .login-mobile-brand .login-brand-name { color: #0f172a; }
+
+[data-theme="light"] .login-demo-section .login-demo-label { color: #94a3b8; }
+[data-theme="light"] .login-demo-line   { background: rgba(0,0,0,0.08); }
+
+[data-theme="light"] .login-demo-btn {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .login-demo-btn:hover {
+  background: rgba(79, 70, 229, 0.06);
+  border-color: rgba(79, 70, 229, 0.2);
+}
+
+[data-theme="light"] .login-demo-btn-title { color: #0f172a; }
+[data-theme="light"] .login-demo-btn-sub   { color: #94a3b8; }
+
+[data-theme="light"] .login-submit-btn {
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.3);
+}
+
+/* Auth pages (forgot password, reset password) */
+[data-theme="light"] .auth-page {
+  background: linear-gradient(135deg, #e0e7ff 0%, #f0f9ff 60%, #f8fafc 100%);
+}
+
+[data-theme="light"] .auth-card {
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+[data-theme="light"] .auth-logo h1,
+[data-theme="light"] .auth-title  { color: #0f172a; }
+[data-theme="light"] .auth-subtitle { color: #64748b; }
+[data-theme="light"] .auth-footer-link { color: #64748b; }
