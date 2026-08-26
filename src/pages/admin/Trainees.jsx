@@ -160,7 +160,7 @@ export default function AdminTrainees() {
             {r.profiles?.name?.[0]?.toUpperCase() ?? 'M'}
           </div>
           <div>
-            <div style={{ fontWeight: 600, color: '#ffffff' }}>{r.profiles?.name ?? '—'}</div>
+            <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{r.profiles?.name ?? '—'}</div>
             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{r.profiles?.email ?? ''}</div>
           </div>
         </div>
@@ -222,7 +222,7 @@ export default function AdminTrainees() {
             style={{
               background: 'transparent',
               border: 'none',
-              color: '#ffffff',
+              color: 'var(--text-primary)',
               fontSize: '0.875rem',
               outline: 'none',
               width: '100%'

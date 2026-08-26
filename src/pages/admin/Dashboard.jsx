@@ -194,7 +194,7 @@ export default function AdminDashboard() {
       {/* ── Quick Actions Row ────────────────────────────────── */}
       <div style={{ marginBottom: '2rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
-          <h3 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0, color: '#ffffff' }}>Operational Shortcuts</h3>
+          <h3 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>Operational Shortcuts</h3>
           <span style={{ fontSize: '0.78125rem', color: 'var(--text-muted)' }}>Quick management actions</span>
         </div>
         <div className="quick-actions-grid">
@@ -305,7 +305,7 @@ export default function AdminDashboard() {
                   <tr key={p.id}>
                     <td>
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <span style={{ fontWeight: 600, color: '#ffffff' }}>
+                        <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
                           {p.trainees?.profiles?.name ?? 'Anonymous Trainee'}
                         </span>
                         <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
@@ -313,7 +313,7 @@ export default function AdminDashboard() {
                         </span>
                       </div>
                     </td>
-                    <td style={{ fontWeight: 700, color: '#ffffff' }}>
+                    <td style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
                       {currency(p.amount)}
                     </td>
                     <td>{p.payment_date}</td>
