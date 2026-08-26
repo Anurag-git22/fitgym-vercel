@@ -48,8 +48,16 @@ export default function TrainerAttendance() {
 
   function openEdit(row) {
     setTarget(row);
-    setForm({ trainee_id: row.trainee_id, date: row.date, status: row.status, check_in_time: row.check_in_time?.slice(0, 16) ?? '' });
+    const timeOnly = row.check_in_time
+      ? new Date(row.check_in_time).toTimeString().slice(0, 5)
+      : '';
+    setForm({ trainee_id: row.trainee_id, date: row.date, status: row.status, check_in_time: timeOnly });
     setError(''); setModal('edit');
+  }
+
+  function buildTimestamp(date, time) {
+    if (!time) return null;
+    return `${date}T${time}:00`;
   }
 
   async function handleAdd(e) {
@@ -58,7 +66,7 @@ export default function TrainerAttendance() {
       trainee_id:    form.trainee_id,
       date:          form.date,
       status:        form.status,
-      check_in_time: form.check_in_time || null,
+      check_in_time: buildTimestamp(form.date, form.check_in_time),
     }, { onConflict: 'trainee_id,date' });
     setBusy(false);
     if (err) { setError(err.message); return; }
@@ -69,7 +77,7 @@ export default function TrainerAttendance() {
     e.preventDefault(); setBusy(true); setError('');
     const { error: err } = await supabase.from('attendance').update({
       status:        form.status,
-      check_in_time: form.check_in_time || null,
+      check_in_time: buildTimestamp(target.date, form.check_in_time),
     }).eq('id', target.id);
     setBusy(false);
     if (err) { setError(err.message); return; }
@@ -153,7 +161,7 @@ export default function TrainerAttendance() {
           </div>
           <div className="form-group">
             <label>Check-in Time</label>
-            <input type="datetime-local" value={form.check_in_time} onChange={e => setForm(f => ({ ...f, check_in_time: e.target.value }))} />
+            <input type="time" value={form.check_in_time} onChange={e => setForm(f => ({ ...f, check_in_time: e.target.value }))} />
           </div>
           {error && <div className="auth-error">{error}</div>}
           <div className="form-actions">
@@ -175,7 +183,7 @@ export default function TrainerAttendance() {
           </div>
           <div className="form-group">
             <label>Check-in Time</label>
-            <input type="datetime-local" value={form.check_in_time} onChange={e => setForm(f => ({ ...f, check_in_time: e.target.value }))} />
+            <input type="time" value={form.check_in_time} onChange={e => setForm(f => ({ ...f, check_in_time: e.target.value }))} />
           </div>
           {error && <div className="auth-error">{error}</div>}
           <div className="form-actions">
