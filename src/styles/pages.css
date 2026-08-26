@@ -597,3 +597,68 @@
   background: #eef2ff;
   color: #4338ca;
 }
+
+/* ── Membership plan price banner ───────────────────────────── */
+.membership-price-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 10px;
+  padding: 0.65rem 1rem;
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.membership-price-val {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: -0.02em;
+}
+
+[data-theme="light"] .membership-price-banner {
+  background: rgba(79, 70, 229, 0.06);
+  border-color: rgba(79, 70, 229, 0.18);
+}
+
+/* ── Plan management rows ───────────────────────────────────── */
+.plan-manage-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.65rem 0.85rem;
+  background: var(--bg-card);
+  border: var(--border-glass);
+  border-radius: 10px;
+  flex-wrap: wrap;
+}
+
+.plan-manage-input {
+  padding: 0.45rem 0.65rem;
+  background: var(--bg-surface);
+  border: var(--border-glass);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  outline: none;
+  min-width: 0;
+}
+
+.plan-manage-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-glow);
+}
+
+[data-theme="light"] .plan-manage-row {
+  background: #f8fafc;
+  border-color: rgba(0,0,0,0.07);
+}
+
+[data-theme="light"] .plan-manage-input {
+  background: #ffffff;
+  border-color: #d1d5db;
+  color: #0f172a;
+}
