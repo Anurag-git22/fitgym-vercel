@@ -939,3 +939,148 @@
 [data-theme="light"] .notif-dropdown-item--unread:hover {
   background: #ede9fe;
 }
+
+/* ════════════════════════════════════════════════════════════
+   FULL RESPONSIVE — Mobile / Tablet / Laptop / Large Screen
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Large screen (1440px+) ─────────────────────────────────── */
+@media (min-width: 1440px) {
+  :root {
+    --sidebar-width: 280px;
+  }
+
+  .page-content {
+    padding: 2.5rem 3rem;
+    max-width: 1600px;
+  }
+}
+
+/* ── Laptop (1024px – 1279px) ───────────────────────────────── */
+@media (max-width: 1279px) {
+  :root {
+    --sidebar-width: 240px;
+  }
+
+  .topbar {
+    padding: 0 1.5rem;
+    gap: 1rem;
+  }
+
+  .topbar-live-badge {
+    display: none;
+  }
+
+  .page-content {
+    padding: 1.75rem 1.5rem;
+  }
+}
+
+/* ── Tablet (768px – 1023px) ────────────────────────────────── */
+@media (max-width: 1023px) {
+  .topbar-user-info { display: none; }
+  .topbar-live-badge { display: none; }
+
+  .topbar-search {
+    display: none;
+  }
+
+  .topbar {
+    padding: 0 1.25rem;
+    gap: 0.75rem;
+  }
+
+  .page-content {
+    padding: 1.25rem 1rem;
+  }
+
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+    z-index: 200;
+  }
+
+  .sidebar--mobile-open {
+    transform: translateX(0);
+  }
+
+  .app-main,
+  .app-shell--collapsed .app-main {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .sidebar-toggle {
+    display: none;
+  }
+
+  .topbar-hamburger {
+    display: flex;
+  }
+}
+
+/* ── Mobile (< 768px) ───────────────────────────────────────── */
+@media (max-width: 767px) {
+  :root {
+    --topbar-height: 60px;
+  }
+
+  .topbar {
+    padding: 0 1rem;
+    height: var(--topbar-height);
+  }
+
+  .topbar-title {
+    font-size: 1rem;
+  }
+
+  .topbar-breadcrumb {
+    display: none;
+  }
+
+  .topbar-right {
+    gap: 0.5rem;
+  }
+
+  .topbar-icon-btn {
+    padding: 0.4rem;
+  }
+
+  .topbar-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+
+  .topbar-avatar-wrap {
+    gap: 0.4rem;
+    padding-left: 0.4rem;
+  }
+
+  .page-content {
+    padding: 1rem 0.85rem;
+  }
+
+  /* Notification dropdown full width on mobile */
+  .notif-dropdown {
+    width: calc(100vw - 2rem);
+    right: -1rem;
+  }
+}
+
+/* ── Small mobile (< 480px) ─────────────────────────────────── */
+@media (max-width: 479px) {
+  .topbar {
+    padding: 0 0.75rem;
+  }
+
+  .topbar-title {
+    font-size: 0.9rem;
+  }
+
+  .page-content {
+    padding: 0.85rem 0.65rem;
+  }
+
+  .topbar-live-badge { display: none; }
+}

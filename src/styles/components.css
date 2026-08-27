@@ -925,3 +925,145 @@
 [data-theme="light"] .table-search-input {
   color: #0f172a;
 }
+
+/* ════════════════════════════════════════════════════════════
+   FULL RESPONSIVE — Components
+   ════════════════════════════════════════════════════════════ */
+
+/* Tablet */
+@media (max-width: 1023px) {
+  .stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .modal-dialog--lg { max-width: 680px; }
+
+  .table-search-wrap {
+    min-width: 160px;
+    max-width: 240px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.85rem;
+  }
+
+  .stat-card {
+    padding: 1rem 1.1rem;
+  }
+
+  .stat-card-value {
+    font-size: 1.6rem;
+  }
+
+  .modal-overlay {
+    padding: 0.75rem;
+    align-items: flex-end;
+  }
+
+  .modal-dialog {
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    max-height: 92vh;
+  }
+
+  .modal-dialog--sm,
+  .modal-dialog--md,
+  .modal-dialog--lg {
+    max-width: 100%;
+  }
+
+  .modal-header {
+    padding: 1.1rem 1.25rem 0.85rem;
+  }
+
+  .modal-body {
+    padding: 1.25rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .page-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .card-body {
+    padding: 1rem;
+  }
+
+  .card-header {
+    padding: 1rem 1.1rem 0.75rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 0.75rem 0.85rem;
+    font-size: 0.8125rem;
+  }
+
+  .pagination-wrap {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .table-search-wrap {
+    min-width: 100%;
+    max-width: 100%;
+  }
+
+  .quick-actions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    gap: 0.65rem;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 479px) {
+  .stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card-value {
+    font-size: 1.5rem;
+  }
+
+  .badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+  }
+
+  .pagination-btns {
+    gap: 0.2rem;
+  }
+
+  .pagination-btn {
+    min-width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+  }
+}
