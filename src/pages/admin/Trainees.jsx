@@ -256,12 +256,12 @@ export default function AdminTrainees() {
       <Modal open={modal === 'add'} onClose={() => setModal(null)} title="Register New Trainee" size="md">
         <form onSubmit={handleAdd} className="auth-form">
           <div className="form-row">
-            <div className="form-group"><label>Full Name *</label><input required placeholder="e.g. Jessica Miller" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} /></div>
+            <div className="form-group"><label>Full Name *</label><input required placeholder="" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} /></div>
             <div className="form-group"><label>Email Address *</label><input required type="email" placeholder="member@fitgym.net" value={form.email} onChange={e=>setForm(f=>({...f,email:e.target.value}))} /></div>
           </div>
           <div className="form-row">
             <div className="form-group"><label>Password *</label><input required type="password" placeholder="••••••••" value={form.password} onChange={e=>setForm(f=>({...f,password:e.target.value}))} /></div>
-            <div className="form-group"><label>Phone Number</label><input placeholder="+1 (555) 000-0000" value={form.phone} onChange={e=>setForm(f=>({...f,phone:e.target.value}))} /></div>
+            <div className="form-group"><label>Phone Number</label><input placeholder="+91 0000-0000" value={form.phone} onChange={e=>setForm(f=>({...f,phone:e.target.value}))} /></div>
           </div>
           <div className="form-row">
             <div className="form-group"><label>Date of Birth</label><input type="date" value={form.date_of_birth} onChange={e=>setForm(f=>({...f,date_of_birth:e.target.value}))} /></div>
