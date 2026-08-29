@@ -142,19 +142,21 @@ export default function AdminMemberships() {
   /* ── Table columns ────────────────────────────────────────── */
   const columns = [
     { key: 'trainee',    label: 'Trainee', render: (_, r) => r.trainees?.profiles?.name ?? '—' },
-    { key: 'plan',       label: 'Plan',    render: v => v },
+    { key: 'plan',       label: 'Plan',    render: v => v, hideOnMobile: true },
     {
       key: 'price', label: 'Price',
       render: (_, r) => {
         const plan = plans?.find(p => p.name === r.plan);
         return plan ? currency(plan.price) : '—';
       },
+      hideOnMobile: true,
     },
-    { key: 'start_date', label: 'Start',  render: v => v },
-    { key: 'end_date',   label: 'End',    render: v => v },
+    { key: 'start_date', label: 'Start',  render: v => v, hideOnMobile: true },
+    { key: 'end_date',   label: 'End',    render: v => v, hideOnMobile: true },
     { key: 'status',     label: 'Status', render: v => <Badge status={v} /> },
     {
       key: 'actions', label: '',
+      hideOnMobile: true,
       render: (_, r) => (
         <button className="btn btn-secondary btn-sm" onClick={() => openEdit(r)}>Edit</button>
       ),

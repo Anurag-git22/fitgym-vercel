@@ -26,8 +26,8 @@ export default function TrainerMyTrainees() {
 
   const columns = [
     { key: 'name',   label: 'Name',   render: (_, r) => r.profiles?.name  ?? '—' },
-    { key: 'email',  label: 'Email',  render: (_, r) => r.profiles?.email ?? '—' },
-    { key: 'phone',  label: 'Phone',  render: (_, r) => r.profiles?.phone ?? '—' },
+    { key: 'email',  label: 'Email',  render: (_, r) => r.profiles?.email ?? '—', hideOnMobile: true },
+    { key: 'phone',  label: 'Phone',  render: (_, r) => r.profiles?.phone ?? '—', hideOnMobile: true },
     {
       key: 'membership', label: 'Membership',
       render: (_, r) => {
@@ -38,6 +38,7 @@ export default function TrainerMyTrainees() {
     { key: 'status', label: 'Status', render: (_, r) => <Badge status={r.profiles?.account_status} /> },
     {
       key: 'actions', label: '',
+      hideOnMobile: true,
       render: (_, r) => (
         <button className="btn btn-secondary btn-sm" onClick={e => { e.stopPropagation(); navigate(`/trainer/trainees/${r.id}`); }}>
           View

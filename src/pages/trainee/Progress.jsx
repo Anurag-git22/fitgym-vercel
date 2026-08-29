@@ -32,8 +32,8 @@ export default function TraineeProgress() {
   const columns = [
     { key: 'recorded_date', label: 'Date' },
     { key: 'weight',        label: 'Weight',       render: v => v ? `${v} kg` : '—' },
-    { key: 'measurements',  label: 'Measurements', render: v => v ? (typeof v === 'object' ? JSON.stringify(v) : v) : '—' },
-    { key: 'notes',         label: 'Notes',        render: v => v ?? '—' },
+    { key: 'measurements',  label: 'Measurements', render: v => v ? (typeof v === 'object' ? JSON.stringify(v) : v) : '—', hideOnMobile: true },
+    { key: 'notes',         label: 'Notes',        render: v => v ?? '—', hideOnMobile: true },
   ];
 
   return (

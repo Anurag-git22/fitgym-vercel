@@ -7,6 +7,7 @@ import Card from '../../components/ui/Card';
 import Chart from '../../components/ui/Chart';
 import Badge from '../../components/ui/Badge';
 import QuickActionCard from '../../components/ui/QuickActionCard';
+import Table from '../../components/ui/Table';
 import ThreeDHero from '../../components/3d/ThreeDHero';
 import {
   Users,
@@ -93,6 +94,34 @@ export default function AdminDashboard() {
       .order('created_at', { ascending: false })
       .limit(6);
   }, []);
+
+  const recentCols = [
+    {
+      key: 'trainee', label: 'Trainee / Member',
+      render: (_, r) => (
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+            {r.trainees?.profiles?.name ?? 'Anonymous Trainee'}
+          </span>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            {r.trainees?.profiles?.email ?? ''}
+          </span>
+        </div>
+      ),
+    },
+    { key: 'amount', label: 'Amount', render: v => <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{currency(v)}</span> },
+    { key: 'payment_date', label: 'Payment Date', render: v => v },
+    { key: 'payment_status', label: 'Status', render: v => <Badge status={v} /> },
+    {
+      key: 'actions', label: '',
+      hideOnMobile: true,
+      render: (_, r) => (
+        <Link to="/admin/payments" className="btn btn-secondary btn-sm" style={{ padding: '0.25rem 0.6rem' }}>
+          Details
+        </Link>
+      ),
+    },
+  ];
 
   const attendanceRate = useMemo(() => {
     if (!stats?.trainees) return '88%';
@@ -287,47 +316,7 @@ export default function AdminDashboard() {
         {payLoading ? (
           <div className="spinner" style={{ margin: '2rem auto' }} />
         ) : (
-          <div className="table-wrap">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Trainee / Member</th>
-                  <th>Amount</th>
-                  <th>Payment Date</th>
-                  <th>Status</th>
-                  <th style={{ textAlign: 'right' }}>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(recentPayments ?? []).length === 0 ? (
-                  <tr><td colSpan={5} className="table-empty">No payment transactions recorded yet.</td></tr>
-                ) : (recentPayments ?? []).map(p => (
-                  <tr key={p.id}>
-                    <td>
-                      <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
-                          {p.trainees?.profiles?.name ?? 'Anonymous Trainee'}
-                        </span>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                          {p.trainees?.profiles?.email ?? ''}
-                        </span>
-                      </div>
-                    </td>
-                    <td style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
-                      {currency(p.amount)}
-                    </td>
-                    <td>{p.payment_date}</td>
-                    <td><Badge status={p.payment_status} /></td>
-                    <td style={{ textAlign: 'right' }}>
-                      <Link to="/admin/payments" className="btn btn-secondary btn-sm" style={{ padding: '0.25rem 0.6rem' }}>
-                        Details
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <Table columns={recentCols} data={recentPayments ?? []} loading={payLoading} emptyMsg="No payment transactions recorded yet." />
         )}
       </Card>
     </div>

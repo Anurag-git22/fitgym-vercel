@@ -105,9 +105,10 @@ export default function TrainerWorkouts() {
     { key: 'trainee',          label: 'Trainee',  render: (_, r) => r.trainees?.profiles?.name ?? '—' },
     { key: 'duration_minutes', label: 'Duration', render: v => v ? `${v} min` : '—' },
     { key: 'exercises',        label: 'Exercises', render: v => `${(v ?? []).length} exercises` },
-    { key: 'created_at',       label: 'Created',  render: v => new Date(v).toLocaleDateString() },
+    { key: 'created_at',       label: 'Created',  render: v => new Date(v).toLocaleDateString(), hideOnMobile: true },
     {
       key: 'actions', label: '',
+      hideOnMobile: true,
       render: (_, r) => (
         <div style={{ display: 'flex', gap: '0.4rem' }}>
           <button className="btn btn-secondary btn-sm" onClick={() => openView(r)}>View</button>

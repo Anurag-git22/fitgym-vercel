@@ -81,11 +81,12 @@ export default function AdminAttendance() {
 
   const columns = [
     { key: 'trainee', label: 'Trainee',        render: (_, r) => r.trainees?.profiles?.name ?? '—' },
-    { key: 'date',    label: 'Date',            render: v => v },
+    { key: 'date',    label: 'Date',            render: v => v, hideOnMobile: true },
     { key: 'status',  label: 'Status',          render: v => <Badge status={v} /> },
-    { key: 'check_in_time', label: 'Check-in', render: v => v ? new Date(v).toLocaleTimeString() : '—' },
+    { key: 'check_in_time', label: 'Check-in', render: v => v ? new Date(v).toLocaleTimeString() : '—', hideOnMobile: true },
     {
       key: 'actions', label: '',
+      hideOnMobile: true,
       render: (_, r) => <button className="btn btn-secondary btn-sm" onClick={() => openEdit(r)}>Edit</button>,
     },
   ];

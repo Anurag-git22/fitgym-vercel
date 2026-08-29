@@ -128,12 +128,13 @@ export default function AdminPayments() {
         );
       }
     },
-    { key: 'memberships',    label: 'Plan',         render: (_, r) => r.memberships?.plan ?? '—' },
+    { key: 'memberships',    label: 'Plan',         render: (_, r) => r.memberships?.plan ?? '—', hideOnMobile: true },
     { key: 'amount',         label: 'Amount',       render: v => currency(v) },
-    { key: 'payment_date',   label: 'Payment Date', render: v => v },
+    { key: 'payment_date',   label: 'Payment Date', render: v => v, hideOnMobile: true },
     { key: 'payment_status', label: 'Status',       render: v => <Badge status={v} /> },
     {
       key: 'actions', label: '',
+      hideOnMobile: true,
       render: (_, r) => <button className="btn btn-secondary btn-sm" onClick={() => openEdit(r)}>Edit</button>,
     },
   ];

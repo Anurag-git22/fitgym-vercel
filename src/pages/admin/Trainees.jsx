@@ -173,20 +173,22 @@ export default function AdminTrainees() {
         </div>
       )
     },
-    { key: 'phone', label: 'Contact Phone', render: (_, r) => r.profiles?.phone || '—' },
+    { key: 'phone', label: 'Contact Phone', render: (_, r) => r.profiles?.phone || '—', hideOnMobile: true },
     {
       key: 'trainer',
       label: 'Assigned Trainer',
+      hideOnMobile: true,
       render: (_, r) => r.trainers?.profiles?.name ? (
         <span style={{ color: 'var(--cyan)', fontWeight: 500 }}>{r.trainers.profiles.name}</span>
       ) : (
         <span style={{ color: 'var(--text-muted)' }}>Unassigned</span>
       )
     },
-    { key: 'dob', label: 'Date of Birth', render: (_, r) => r.date_of_birth ?? '—' },
+    { key: 'dob', label: 'Date of Birth', render: (_, r) => r.date_of_birth ?? '—', hideOnMobile: true },
     { key: 'status', label: 'Status', render: (_, r) => <Badge status={r.profiles?.account_status} /> },
     {
       key: 'actions', label: '',
+      hideOnMobile: true,
       render: (_, r) => (
         <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'flex-end' }}>
           <button className="btn btn-secondary btn-sm" onClick={() => openEdit(r)}>

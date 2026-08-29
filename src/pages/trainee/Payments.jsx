@@ -33,7 +33,7 @@ export default function TraineePayments() {
 
   const columns = [
     { key: 'payment_date',   label: 'Date' },
-    { key: 'memberships',    label: 'Plan',   render: (_, r) => r.memberships?.plan ?? '—' },
+    { key: 'memberships',    label: 'Plan',   render: (_, r) => r.memberships?.plan ?? '—', hideOnMobile: true },
     { key: 'amount',         label: 'Amount', render: v => currency(v) },
     { key: 'payment_status', label: 'Status', render: v => <Badge status={v} /> },
   ];

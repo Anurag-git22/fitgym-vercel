@@ -170,11 +170,12 @@ export default function AdminTrainers() {
       )
     },
     { key: 'specialization', label: 'Specialization', render: v => <span style={{ color: 'var(--cyan)', fontWeight: 500 }}>{v ?? 'General Fitness'}</span> },
-    { key: 'phone', label: 'Contact Phone', render: (_, r) => r.profiles?.phone || '—' },
-    { key: 'joining_date', label: 'Joined Date', render: v => v ?? '—' },
+    { key: 'phone', label: 'Contact Phone', render: (_, r) => r.profiles?.phone || '—', hideOnMobile: true },
+    { key: 'joining_date', label: 'Joined Date', render: v => v ?? '—', hideOnMobile: true },
     { key: 'status', label: 'Status', render: (_, r) => <Badge status={r.profiles?.account_status} /> },
     {
       key: 'actions', label: '',
+      hideOnMobile: true,
       render: (_, r) => (
         <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'flex-end' }}>
           <button className="btn btn-secondary btn-sm" onClick={() => openEdit(r)}>

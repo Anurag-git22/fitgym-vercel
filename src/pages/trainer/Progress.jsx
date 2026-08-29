@@ -101,9 +101,10 @@ export default function TrainerProgress() {
     { key: 'trainee',       label: 'Trainee',  render: (_, r) => r.trainees?.profiles?.name ?? '—' },
     { key: 'recorded_date', label: 'Date' },
     { key: 'weight',        label: 'Weight',   render: v => v ? `${v} kg` : '—' },
-    { key: 'notes',         label: 'Notes',    render: v => v ? (v.length > 40 ? v.slice(0, 40) + '…' : v) : '—' },
+    { key: 'notes',         label: 'Notes',    render: v => v ? (v.length > 40 ? v.slice(0, 40) + '…' : v) : '—', hideOnMobile: true },
     {
       key: 'actions', label: '',
+      hideOnMobile: true,
       render: (_, r) => (
         <div style={{ display: 'flex', gap: '0.4rem' }}>
           <button className="btn btn-secondary btn-sm" onClick={() => openEdit(r)}>Edit</button>

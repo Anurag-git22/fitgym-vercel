@@ -45,7 +45,7 @@ export default function TraineeAttendance() {
   const columns = [
     { key: 'date',          label: 'Date' },
     { key: 'status',        label: 'Status',   render: v => <Badge status={v} /> },
-    { key: 'check_in_time', label: 'Check-in', render: v => v ? new Date(v).toLocaleTimeString() : '—' },
+    { key: 'check_in_time', label: 'Check-in', render: v => v ? new Date(v).toLocaleTimeString() : '—', hideOnMobile: true },
   ];
 
   return (

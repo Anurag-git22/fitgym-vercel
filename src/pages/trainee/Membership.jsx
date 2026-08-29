@@ -33,7 +33,7 @@ export default function TraineeMembership() {
   const histCols = [
     { key: 'plan',       label: 'Plan' },
     { key: 'start_date', label: 'Start' },
-    { key: 'end_date',   label: 'End' },
+    { key: 'end_date',   label: 'End', hideOnMobile: true },
     { key: 'status',     label: 'Status', render: v => <Badge status={v} /> },
   ];
 

@@ -254,6 +254,83 @@
   animation: shimmerDark 1.8s infinite;
 }
 
+/* ── Data Cards (mobile table replacement) ───────────────────── */
+.data-table-cards {
+  display: none;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.data-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.table-row--clickable + .data-table-cards .data-card,
+.data-card--clickable {
+  cursor: pointer;
+}
+
+.data-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-highlight);
+}
+
+.data-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.data-card-row:last-child {
+  border-bottom: none;
+}
+
+.data-card-label {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.data-card-value {
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  text-align: right;
+  word-break: break-word;
+  line-height: 1.4;
+}
+
+.data-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-subtle);
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.data-card--skeleton .data-card-row .skeleton-cell {
+  margin-bottom: 0.5rem;
+}
+
+.table-empty {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 3.5rem 1rem !important;
+  font-size: 0.9rem;
+}
+
 /* ── Modal ─────────────────────────────────────────────────── */
 .modal-overlay {
   position: fixed;
@@ -1012,6 +1089,22 @@
   .data-table th,
   .data-table td {
     padding: 0.75rem 0.85rem;
+    font-size: 0.8125rem;
+  }
+
+  .data-table {
+    display: none;
+  }
+
+  .data-table-cards {
+    display: flex;
+  }
+
+  .data-card {
+    padding: 1rem;
+  }
+
+  .data-card-value {
     font-size: 0.8125rem;
   }
 

@@ -1,5 +1,6 @@
 /**
  * Table — Responsive Dark SaaS Data Table with Skeleton Loaders
+ * Renders as cards on mobile (≤767px) using hideOnMobile column config.
  */
 export default function Table({
   columns = [],
@@ -9,6 +10,9 @@ export default function Table({
   rowKey = 'id',
   onRowClick,
 }) {
+  const visibleCols = columns.filter(c => !c.hideOnMobile);
+  const actionCols  = columns.filter(c => c.hideOnMobile && c.key === 'actions');
+
   if (loading) {
     return (
       <div className="table-wrap">
@@ -32,6 +36,18 @@ export default function Table({
             ))}
           </tbody>
         </table>
+        <div className="data-table-cards">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="data-card data-card--skeleton">
+              {visibleCols.map(c => (
+                <div key={c.key} className="data-card-row">
+                  <div className="skeleton-cell" style={{ height: 12, width: '40%' }} />
+                  <div className="skeleton-cell" style={{ height: 14, width: '55%' }} />
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -72,6 +88,36 @@ export default function Table({
           )}
         </tbody>
       </table>
+
+      <div className="data-table-cards">
+        {data.length === 0 ? (
+          <div className="table-empty">{emptyMsg}</div>
+        ) : (
+          data.map(row => (
+            <div
+              key={row[rowKey]}
+              className={`data-card${onRowClick ? ' data-card--clickable' : ''}`}
+              onClick={onRowClick ? () => onRowClick(row) : undefined}
+            >
+              {visibleCols.map(c => (
+                <div key={c.key} className="data-card-row">
+                  <span className="data-card-label">{c.label}</span>
+                  <span className="data-card-value">
+                    {c.render ? c.render(row[c.key], row) : row[c.key] ?? '—'}
+                  </span>
+                </div>
+              ))}
+              {actionCols.length > 0 && (
+                <div className="data-card-actions">
+                  {actionCols.map(c => (
+                    <span key={c.key}>{c.render ? c.render(row[c.key], row) : row[c.key] ?? '—'}</span>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 }

@@ -41,20 +41,20 @@ export default function TrainerTraineeDetail() {
   const attendanceCols = [
     { key: 'date',          label: 'Date' },
     { key: 'status',        label: 'Status',   render: v => <Badge status={v} /> },
-    { key: 'check_in_time', label: 'Check-in', render: v => v ? new Date(v).toLocaleTimeString() : '—' },
+    { key: 'check_in_time', label: 'Check-in', render: v => v ? new Date(v).toLocaleTimeString() : '—', hideOnMobile: true },
   ];
 
   const workoutCols = [
     { key: 'name',             label: 'Name' },
     { key: 'duration_minutes', label: 'Duration',  render: v => v ? `${v} min` : '—' },
-    { key: 'created_at',       label: 'Created',   render: v => new Date(v).toLocaleDateString() },
-    { key: 'notes',            label: 'Notes',     render: v => v ?? '—' },
+    { key: 'created_at',       label: 'Created',   render: v => new Date(v).toLocaleDateString(), hideOnMobile: true },
+    { key: 'notes',            label: 'Notes',     render: v => v ?? '—', hideOnMobile: true },
   ];
 
   const progressCols = [
     { key: 'recorded_date', label: 'Date' },
     { key: 'weight',        label: 'Weight', render: v => v ? `${v} kg` : '—' },
-    { key: 'notes',         label: 'Notes',  render: v => v ?? '—' },
+    { key: 'notes',         label: 'Notes',  render: v => v ?? '—', hideOnMobile: true },
   ];
 
   return (

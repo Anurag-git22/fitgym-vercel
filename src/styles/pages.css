@@ -803,14 +803,3 @@
     font-size: 0.8rem;
   }
 }
-
-/* ── Table horizontal scroll on mobile ──────────────────────── */
-@media (max-width: 767px) {
-  .table-wrap {
-    border-radius: 0;
-  }
-
-  .data-table {
-    min-width: 500px;
-  }
-}
