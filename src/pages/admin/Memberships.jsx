@@ -40,6 +40,13 @@ export default function AdminMemberships() {
   const [error,  setError]  = useState('');
   const [search, setSearch] = useState('');
   const [page,   setPage]   = useState(1);
+  const [sortBy, setSortBy] = useState('start_date');
+  const [sortDir, setSortDir] = useState('desc');
+
+  function handleSort(key) {
+    if (sortBy === key) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    else { setSortBy(key); setSortDir('asc'); }
+  }
 
   /* Fetch memberships */
   const { data, loading, refetch } = useSupabaseQuery(() =>
@@ -56,6 +63,26 @@ export default function AdminMemberships() {
       .select('*')
       .order('duration_months', { ascending: true }),
   []);
+
+  const filtered = useMemo(() => {
+    if (!data) return [];
+    let arr = data;
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      arr = arr.filter(r => r.trainees?.profiles?.name?.toLowerCase().includes(q) || r.plan?.toLowerCase().includes(q));
+    }
+    arr = [...arr].sort((a, b) => {
+      let av = '', bv = '';
+      if (sortBy === 'trainee') { av = a.trainees?.profiles?.name ?? ''; bv = b.trainees?.profiles?.name ?? ''; }
+      else if (sortBy === 'plan') { av = a.plan ?? ''; bv = b.plan ?? ''; }
+      else if (sortBy === 'start_date') { av = a.start_date ?? ''; bv = b.start_date ?? ''; }
+      else if (sortBy === 'end_date') { av = a.end_date ?? ''; bv = b.end_date ?? ''; }
+      else if (sortBy === 'status') { av = a.status ?? ''; bv = b.status ?? ''; }
+      else return 0;
+      return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+    });
+    return arr;
+  }, [data, search, sortBy, sortDir]);
 
   /* Fetch trainees */
   const { data: trainees } = useSupabaseQuery(() =>
@@ -147,22 +174,21 @@ export default function AdminMemberships() {
 
   /* ── Table columns ────────────────────────────────────────── */
   const columns = [
-    { key: 'trainee',    label: 'Trainee', render: (_, r) => r.trainees?.profiles?.name ?? '—' },
-    { key: 'plan',       label: 'Plan',    render: v => v, hideOnMobile: true },
+    { key: 'trainee',    label: 'Trainee', sortable: true, render: (_, r) => r.trainees?.profiles?.name ?? '—' },
+    { key: 'plan',       label: 'Plan',    sortable: true, render: v => v, hideOnMobile: true },
     {
-      key: 'price', label: 'Price',
+      key: 'price', label: 'Price', sortable: true,
       render: (_, r) => {
         const plan = plans?.find(p => p.name === r.plan);
         return plan ? currency(plan.price) : '—';
       },
       hideOnMobile: true,
     },
-    { key: 'start_date', label: 'Start',  render: v => v, hideOnMobile: true },
-    { key: 'end_date',   label: 'End',    render: v => v, hideOnMobile: true },
-    { key: 'status',     label: 'Status', render: v => <Badge status={v} /> },
+    { key: 'start_date', label: 'Start',  sortable: true, render: v => v, hideOnMobile: true },
+    { key: 'end_date',   label: 'End',    sortable: true, render: v => v, hideOnMobile: true },
+    { key: 'status',     label: 'Status', sortable: true, render: v => <Badge status={v} /> },
     {
-      key: 'actions', label: '',
-      hideOnMobile: true,
+      key: 'actions', label: '', hideOnMobile: true,
       render: (_, r) => (
         <button className="btn btn-secondary btn-sm" onClick={() => openEdit(r)}>Edit</button>
       ),
@@ -192,16 +218,11 @@ export default function AdminMemberships() {
       </div>
 
       {(() => {
-        const filtered = (data ?? []).filter(r => {
-          if (!search.trim()) return true;
-          const q = search.toLowerCase();
-          return r.trainees?.profiles?.name?.toLowerCase().includes(q) || r.plan?.toLowerCase().includes(q);
-        });
         const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
         const paginated  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
         return (
           <Card padding={false}>
-            <Table columns={columns} data={paginated} loading={loading} emptyMsg="No memberships yet." />
+            <Table columns={columns} data={paginated} loading={loading} emptyMsg="No memberships yet." sortBy={sortBy} sortDir={sortDir} onSort={handleSort} />
             <Pagination page={page} totalPages={totalPages} onChange={setPage} total={filtered.length} pageSize={PAGE_SIZE} />
           </Card>
         );

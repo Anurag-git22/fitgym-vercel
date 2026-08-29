@@ -21,6 +21,8 @@ export default function AdminTrainees() {
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState('name');
+  const [sortDir, setSortDir] = useState('asc');
 
   const { data: trainees, loading, refetch } = useSupabaseQuery(() =>
     supabase
@@ -33,19 +35,37 @@ export default function AdminTrainees() {
     supabase.from('trainers').select('id, profiles(name)'),
   []);
 
-  const filteredTrainees = useMemo(() => {
-    if (!trainees) return [];
-    if (!search.trim()) return trainees;
-    const q = search.toLowerCase();
-    return trainees.filter(t =>
-      t.profiles?.name?.toLowerCase().includes(q) ||
-      t.profiles?.email?.toLowerCase().includes(q) ||
-      t.trainers?.profiles?.name?.toLowerCase().includes(q)
-    );
-  }, [trainees, search]);
+  function handleSort(key) {
+    if (sortBy === key) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    else { setSortBy(key); setSortDir('asc'); }
+  }
 
-  const totalPages = Math.max(1, Math.ceil(filteredTrainees.length / PAGE_SIZE));
-  const paginated  = filteredTrainees.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const sorted = useMemo(() => {
+    if (!trainees) return [];
+    let arr = trainees;
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      arr = arr.filter(t =>
+        t.profiles?.name?.toLowerCase().includes(q) ||
+        t.profiles?.email?.toLowerCase().includes(q) ||
+        t.trainers?.profiles?.name?.toLowerCase().includes(q)
+      );
+    }
+    arr = [...arr].sort((a, b) => {
+      let av = '', bv = '';
+      if (sortBy === 'name') { av = a.profiles?.name ?? ''; bv = b.profiles?.name ?? ''; }
+      else if (sortBy === 'email') { av = a.profiles?.email ?? ''; bv = b.profiles?.email ?? ''; }
+      else if (sortBy === 'phone') { av = a.profiles?.phone ?? ''; bv = b.profiles?.phone ?? ''; }
+      else if (sortBy === 'trainer') { av = a.trainers?.profiles?.name ?? ''; bv = b.trainers?.profiles?.name ?? ''; }
+      else if (sortBy === 'dob') { av = a.date_of_birth ?? ''; bv = b.date_of_birth ?? ''; }
+      else return 0;
+      return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+    });
+    return arr;
+  }, [trainees, search, sortBy, sortDir]);
+
+  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+  const paginated  = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   function openAdd() { setForm(INIT); setError(''); setModal('add'); }
 
@@ -147,60 +167,35 @@ export default function AdminTrainees() {
   }
 
   const columns = [
-    {
-      key: 'name',
-      label: 'Member',
-      render: (_, r) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{
-            width: 36,
-            height: 36,
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, var(--cyan), var(--primary))',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#fff',
-            fontWeight: 700,
-            fontSize: '0.85rem'
-          }}>
-            {r.profiles?.name?.[0]?.toUpperCase() ?? 'M'}
-          </div>
-          <div>
-            <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{r.profiles?.name ?? '—'}</div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{r.profiles?.email ?? ''}</div>
-          </div>
+    { key: 'name', label: 'Member', sortable: true, render: (_, r) => (
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg, var(--cyan), var(--primary))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: '0.85rem' }}>
+          {r.profiles?.name?.[0]?.toUpperCase() ?? 'M'}
         </div>
-      )
-    },
+        <div>
+          <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{r.profiles?.name ?? '—'}</div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{r.profiles?.email ?? ''}</div>
+        </div>
+      </div>
+    )},
     { key: 'phone', label: 'Contact Phone', render: (_, r) => r.profiles?.phone || '—', hideOnMobile: true },
     {
-      key: 'trainer',
-      label: 'Assigned Trainer',
-      hideOnMobile: true,
+      key: 'trainer', label: 'Assigned Trainer', sortable: true,
       render: (_, r) => r.trainers?.profiles?.name ? (
         <span style={{ color: 'var(--cyan)', fontWeight: 500 }}>{r.trainers.profiles.name}</span>
       ) : (
         <span style={{ color: 'var(--text-muted)' }}>Unassigned</span>
       )
     },
-    { key: 'dob', label: 'Date of Birth', render: (_, r) => r.date_of_birth ?? '—', hideOnMobile: true },
+    { key: 'dob', label: 'Date of Birth', render: (_, r) => r.date_of_birth ?? '—', hideOnMobile: true, sortable: true },
     { key: 'status', label: 'Status', render: (_, r) => <Badge status={r.profiles?.account_status} /> },
     {
-      key: 'actions', label: '',
-      hideOnMobile: true,
+      key: 'actions', label: '', hideOnMobile: true,
       render: (_, r) => (
         <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'flex-end' }}>
-          <button className="btn btn-secondary btn-sm" onClick={() => openEdit(r)}>
-            <Edit2 size={13} />
-            <span>Edit</span>
-          </button>
-          <button
-            className={r.profiles?.account_status === 'active' ? 'btn btn-danger btn-sm' : 'btn btn-success btn-sm'}
-            onClick={() => openDelete(r)}
-          >
-            <Power size={13} />
-            <span>{r.profiles?.account_status === 'active' ? 'Deactivate' : 'Activate'}</span>
+          <button className="btn btn-secondary btn-sm" onClick={() => openEdit(r)}><Edit2 size={13} /><span>Edit</span></button>
+          <button className={r.profiles?.account_status === 'active' ? 'btn btn-danger btn-sm' : 'btn btn-success btn-sm'} onClick={() => openDelete(r)}>
+            <Power size={13} /><span>{r.profiles?.account_status === 'active' ? 'Deactivate' : 'Activate'}</span>
           </button>
         </div>
       ),
@@ -248,8 +243,8 @@ export default function AdminTrainees() {
           />
         ) : (
           <>
-            <Table columns={columns} data={paginated} loading={loading} emptyMsg="No trainees match your search criteria." />
-            <Pagination page={page} totalPages={totalPages} onChange={setPage} total={filteredTrainees.length} pageSize={PAGE_SIZE} />
+            <Table columns={columns} data={paginated} loading={loading} emptyMsg="No trainees match your search criteria." sortBy={sortBy} sortDir={sortDir} onSort={handleSort} />
+            <Pagination page={page} totalPages={totalPages} onChange={setPage} total={sorted.length} pageSize={PAGE_SIZE} />
           </>
         )}
       </Card>

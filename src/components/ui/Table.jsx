@@ -9,9 +9,17 @@ export default function Table({
   emptyMsg = 'No records found.',
   rowKey = 'id',
   onRowClick,
+  sortBy,
+  sortDir,
+  onSort,
 }) {
   const visibleCols = columns.filter(c => !c.hideOnMobile);
   const actionCols  = columns.filter(c => c.hideOnMobile && c.key === 'actions');
+
+  function SortIcon({ col }) {
+    if (col.key !== sortBy) return <span style={{ opacity: 0.3, marginLeft: 4 }}>↕</span>;
+    return <span style={{ marginLeft: 4, color: 'var(--primary)' }}>{sortDir === 'asc' ? '↑' : '↓'}</span>;
+  }
 
   if (loading) {
     return (
@@ -58,8 +66,16 @@ export default function Table({
         <thead>
           <tr>
             {columns.map(c => (
-              <th key={c.key} style={c.width ? { width: c.width } : undefined}>
-                {c.label}
+              <th
+                key={c.key}
+                style={c.width ? { width: c.width } : undefined}
+                className={c.sortable ? 'data-table-th--sortable' : ''}
+                onClick={() => c.sortable && onSort?.(c.key)}
+              >
+                <span style={{ display: 'inline-flex', alignItems: 'center', cursor: c.sortable ? 'pointer' : 'default' }}>
+                  {c.label}
+                  {c.sortable && <SortIcon col={c} />}
+                </span>
               </th>
             ))}
           </tr>

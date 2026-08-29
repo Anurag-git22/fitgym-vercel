@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { supabase } from '../../lib/supabaseClient';
 import { Bell, Search, Menu, ChevronRight, Sun, Moon, CheckCheck } from 'lucide-react';
+import SearchModal from '../ui/SearchModal';
 
 /* Map pathname segments to readable titles */
 const ROUTE_TITLES = {
@@ -39,6 +40,7 @@ export default function Topbar({ onMenuToggle }) {
   const [timeStr,       setTimeStr]       = useState('');
   const [notifs,        setNotifs]        = useState([]);
   const [notifOpen,     setNotifOpen]     = useState(false);
+  const [searchOpen,    setSearchOpen]    = useState(false);
   const notifRef = useRef(null);
 
   /* ── Clock ─────────────────────────────────────────────── */
@@ -110,6 +112,18 @@ export default function Topbar({ onMenuToggle }) {
     setNotifs(n => n.map(x => x.id === id ? { ...x, is_read: true } : x));
   }
 
+  /* ── Keyboard shortcut for search ───────────────────────── */
+  useEffect(() => {
+    function handleKey(e) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setSearchOpen(o => !o);
+      }
+    }
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, []);
+
   const unreadCount = notifs.filter(n => !n.is_read).length;
 
   const profileLink =
@@ -135,11 +149,12 @@ export default function Topbar({ onMenuToggle }) {
         </div>
       </div>
 
-      {/* Center: Search */}
-      <div className="topbar-search">
-        <Search size={15} className="topbar-search-icon" />
-        <input type="text" placeholder="Search members, routines, records..." aria-label="Quick search" />
-      </div>
+      {/* Center: Search trigger */}
+      <button className="topbar-search-btn" onClick={() => setSearchOpen(true)} aria-label="Open search">
+        <Search size={15} />
+        <span>Search...</span>
+        <kbd>⌘K</kbd>
+      </button>
 
       {/* Right */}
       <div className="topbar-right">
@@ -260,6 +275,8 @@ export default function Topbar({ onMenuToggle }) {
           </div>
         )}
       </div>
+
+      <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
     </header>
   );
 }

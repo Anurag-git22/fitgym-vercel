@@ -21,6 +21,8 @@ export default function AdminTrainers() {
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState('name');
+  const [sortDir, setSortDir] = useState('asc');
 
   const { data: trainers, loading, refetch } = useSupabaseQuery(() =>
     supabase
@@ -29,16 +31,33 @@ export default function AdminTrainers() {
       .order('created_at', { ascending: false }),
   []);
 
+  function handleSort(key) {
+    if (sortBy === key) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    else { setSortBy(key); setSortDir('asc'); }
+  }
+
   const filteredTrainers = useMemo(() => {
     if (!trainers) return [];
-    if (!search.trim()) return trainers;
-    const q = search.toLowerCase();
-    return trainers.filter(t =>
-      t.profiles?.name?.toLowerCase().includes(q) ||
-      t.profiles?.email?.toLowerCase().includes(q) ||
-      t.specialization?.toLowerCase().includes(q)
-    );
-  }, [trainers, search]);
+    let arr = trainers;
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      arr = arr.filter(t =>
+        t.profiles?.name?.toLowerCase().includes(q) ||
+        t.profiles?.email?.toLowerCase().includes(q) ||
+        t.specialization?.toLowerCase().includes(q)
+      );
+    }
+    arr = [...arr].sort((a, b) => {
+      let av = '', bv = '';
+      if (sortBy === 'name') { av = a.profiles?.name ?? ''; bv = b.profiles?.name ?? ''; }
+      else if (sortBy === 'email') { av = a.profiles?.email ?? ''; bv = b.profiles?.email ?? ''; }
+      else if (sortBy === 'specialization') { av = a.specialization ?? ''; bv = b.specialization ?? ''; }
+      else if (sortBy === 'joining_date') { av = a.joining_date ?? ''; bv = b.joining_date ?? ''; }
+      else return 0;
+      return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+    });
+    return arr;
+  }, [trainers, search, sortBy, sortDir]);
 
   const totalPages = Math.max(1, Math.ceil(filteredTrainers.length / PAGE_SIZE));
   const paginated  = filteredTrainers.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -146,6 +165,7 @@ export default function AdminTrainers() {
     {
       key: 'name',
       label: 'Trainer',
+      sortable: true,
       render: (_, r) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <div style={{
@@ -169,13 +189,14 @@ export default function AdminTrainers() {
         </div>
       )
     },
-    { key: 'specialization', label: 'Specialization', render: v => <span style={{ color: 'var(--cyan)', fontWeight: 500 }}>{v ?? 'General Fitness'}</span> },
+    { key: 'specialization', label: 'Specialization', sortable: true, render: v => <span style={{ color: 'var(--cyan)', fontWeight: 500 }}>{v ?? 'General Fitness'}</span> },
     { key: 'phone', label: 'Contact Phone', render: (_, r) => r.profiles?.phone || '—', hideOnMobile: true },
-    { key: 'joining_date', label: 'Joined Date', render: v => v ?? '—', hideOnMobile: true },
+    { key: 'joining_date', label: 'Joined Date', sortable: true, render: v => v ?? '—', hideOnMobile: true },
     { key: 'status', label: 'Status', render: (_, r) => <Badge status={r.profiles?.account_status} /> },
     {
       key: 'actions', label: '',
       hideOnMobile: true,
+      sortable: false,
       render: (_, r) => (
         <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'flex-end' }}>
           <button className="btn btn-secondary btn-sm" onClick={() => openEdit(r)}>
@@ -235,7 +256,7 @@ export default function AdminTrainers() {
           />
         ) : (
           <>
-            <Table columns={columns} data={paginated} loading={loading} emptyMsg="No trainers match your search criteria." />
+            <Table columns={columns} data={paginated} loading={loading} emptyMsg="No trainers match your search criteria." sortBy={sortBy} sortDir={sortDir} onSort={handleSort} />
             <Pagination page={page} totalPages={totalPages} onChange={setPage} total={filteredTrainers.length} pageSize={PAGE_SIZE} />
           </>
         )}
