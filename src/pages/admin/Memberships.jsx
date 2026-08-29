@@ -26,6 +26,12 @@ function currency(n) {
   return `₹${Number(n ?? 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
 }
 
+function formatDuration(months) {
+  const m = parseInt(months, 10);
+  if (m === 1) return '1 month';
+  return `${m} months`;
+}
+
 export default function AdminMemberships() {
   const [modal,  setModal]  = useState(null);
   const [form,   setForm]   = useState(INIT);
@@ -406,7 +412,7 @@ function ManagePlans({ plans, onUpdate }) {
             ) : (
               <>
                 <span style={{ flex: 2, fontWeight: 600, color: 'var(--text-primary)' }}>{p.name}</span>
-                <span style={{ flex: 1, color: 'var(--text-muted)', fontSize: '0.82rem' }}>{p.duration_months} mo</span>
+                <span style={{ flex: 1, color: 'var(--text-muted)', fontSize: '0.82rem' }}>{formatDuration(p.duration_months)}</span>
                 <span style={{ flex: 1, fontWeight: 700, color: 'var(--primary)' }}>₹{Number(p.price).toLocaleString('en-IN')}</span>
                 <Badge status={p.is_active ? 'active' : 'inactive'} />
                 <button className="btn btn-secondary btn-sm" onClick={() => {

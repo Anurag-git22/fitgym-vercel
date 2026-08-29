@@ -13,7 +13,7 @@ import {
   Users,
   UserCheck,
   IdCard,
-  DollarSign,
+  IndianRupee,
   Clock,
   CalendarCheck,
   UserPlus,
@@ -198,7 +198,7 @@ export default function AdminDashboard() {
         <StatCard
           label="Total Revenue"
           value={currency(stats?.revenue)}
-          icon={<DollarSign size={22} />}
+           icon={<IndianRupee size={22} />}
           color="orange"
           trend={24}
           loading={statsLoading}
