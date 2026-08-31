@@ -42,7 +42,7 @@ export default function TraineePayments() {
     <div>
       <div className="page-header"><h2>My Payments</h2></div>
 
-      <div className="stat-grid" style={{ marginBottom: '1.5rem' }}>
+      <div className="stat-grid stat-grid--2" style={{ marginBottom: '1.5rem' }}>
         <StatCard label="Total Paid"    value={currency(totalPaid)}    icon="✅" color="green"  loading={loading} />
         <StatCard label="Pending"       value={currency(totalPending)} icon="⏳" color="orange" loading={loading} />
         <StatCard label="Last Payment"  value={lastPayment ? currency(lastPayment.amount) : '—'} icon="💳" color="blue" loading={loading} />

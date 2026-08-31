@@ -254,6 +254,7 @@ export default function Topbar({ onMenuToggle }) {
                 name={profile.name}
                 size={36}
                 status={profile.account_status === 'active' ? 'active' : 'inactive'}
+                className="topbar-avatar"
               />
               <div className="topbar-user-info">
                 <span className="topbar-user-name">{profile.name}</span>
@@ -266,7 +267,7 @@ export default function Topbar({ onMenuToggle }) {
               <div className="profile-dropdown" role="menu">
                 <div className="profile-dropdown-head">
                   <Avatar src={profile.avatar_url} name={profile.name} size={40} />
-                  <div>
+                  <div className="profile-dropdown-info">
                     <div className="profile-dropdown-name">{profile.name}</div>
                     <div className="profile-dropdown-email">{profile.email}</div>
                   </div>

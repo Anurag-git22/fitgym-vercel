@@ -158,16 +158,22 @@ export default function ThreeDHero({
 
     window.addEventListener('mousemove', handleMouseMove);
 
-    // 6. Resize handler
+    // 6. Resize handler via ResizeObserver and window resize
     const handleResize = () => {
       if (!container) return;
-      const w = container.clientWidth  || 380;
+      const w = container.clientWidth || 380;
       const h = container.clientHeight || 260;
+      if (w === 0 || h === 0) return;
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
     };
 
+    let resizeObserver = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(handleResize);
+      resizeObserver.observe(container);
+    }
     window.addEventListener('resize', handleResize);
 
     // 7. Animation Loop
@@ -196,9 +202,20 @@ export default function ThreeDHero({
       cancelAnimationFrame(animId);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', handleResize);
+      if (resizeObserver) resizeObserver.disconnect();
       if (container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
       }
+      group.traverse((obj) => {
+        if (obj.geometry) obj.geometry.dispose();
+        if (obj.material) {
+          if (Array.isArray(obj.material)) {
+            obj.material.forEach((m) => m.dispose());
+          } else {
+            obj.material.dispose();
+          }
+        }
+      });
       renderer.dispose();
     };
   }, []);

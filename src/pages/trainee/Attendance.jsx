@@ -52,7 +52,7 @@ export default function TraineeAttendance() {
     <div>
       <div className="page-header"><h2>My Attendance</h2></div>
 
-      <div className="stat-grid" style={{ marginBottom: '1.5rem' }}>
+      <div className="stat-grid stat-grid--2" style={{ marginBottom: '1.5rem' }}>
         <StatCard label="Attendance Rate" value={`${pct}%`}   icon="📊" color="blue"  loading={loading} />
         <StatCard label="Days Present"    value={present}      icon="✅" color="green" loading={loading} />
         <StatCard label="Days Absent"     value={absent}       icon="❌" color="red"   loading={loading} />

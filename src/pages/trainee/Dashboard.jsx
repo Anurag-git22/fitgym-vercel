@@ -86,7 +86,7 @@ export default function TraineeDashboard() {
 
   return (
     <div>
-      <div className="stat-grid">
+      <div className="stat-grid stat-grid--2">
         <StatCard
           label="Membership"
           value={membership ? membership.plan : 'None'}

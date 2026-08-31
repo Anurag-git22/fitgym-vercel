@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
-import MobileBottomNav from './MobileBottomNav';
 
 export default function DashboardLayout({ children }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -29,7 +28,6 @@ export default function DashboardLayout({ children }) {
         <main className="page-content">
           {children}
         </main>
-        <MobileBottomNav />
       </div>
     </div>
   );
