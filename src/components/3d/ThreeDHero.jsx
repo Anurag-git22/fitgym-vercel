@@ -19,11 +19,11 @@ export default function ThreeDHero({
     const container = mountRef.current;
     if (!container) return;
 
-    const width = container.clientWidth || 380;
+    const width  = container.clientWidth  || 380;
     const height = container.clientHeight || 260;
 
     // 1. Scene & Camera
-    const scene = new THREE.Scene();
+    const scene  = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 1000);
     camera.position.set(0, 0, 7);
 
@@ -33,6 +33,13 @@ export default function ThreeDHero({
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.2;
+    // Ensure canvas never overflows
+    renderer.domElement.style.display = 'block';
+    renderer.domElement.style.width   = '100%';
+    renderer.domElement.style.height  = '100%';
+    renderer.domElement.style.position = 'absolute';
+    renderer.domElement.style.top     = '0';
+    renderer.domElement.style.left    = '0';
     container.appendChild(renderer.domElement);
 
     // 3. Lighting
@@ -154,8 +161,8 @@ export default function ThreeDHero({
     // 6. Resize handler
     const handleResize = () => {
       if (!container) return;
-      const w = container.clientWidth;
-      const h = container.clientHeight;
+      const w = container.clientWidth  || 380;
+      const h = container.clientHeight || 260;
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
