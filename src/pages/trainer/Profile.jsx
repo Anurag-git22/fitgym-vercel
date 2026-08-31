@@ -90,7 +90,7 @@ export default function TrainerProfile() {
       <Card title="Profile Information" style={{ marginBottom: '1.5rem' }}>
         {/* Avatar */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
-          <div className="sidebar-user-avatar" style={{ width: 64, height: 64, fontSize: '1.5rem' }}>
+          <div className="avatar-lg">
             {profile?.avatar_url
               ? <img src={profile.avatar_url} alt="avatar" />
               : <span>{profile?.name?.[0]?.toUpperCase() ?? '?'}</span>

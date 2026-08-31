@@ -1,20 +1,14 @@
 import { useState } from 'react';
 import Sidebar from './Sidebar';
-import Topbar  from './Topbar';
-// layout.css is imported globally via src/styles/global.css
+import Topbar from './Topbar';
+import MobileBottomNav from './MobileBottomNav';
 
-/**
- * DashboardLayout
- * Wraps all protected pages with the sidebar + topbar shell.
- * Sidebar can be collapsed (desktop) or toggled (mobile).
- */
 export default function DashboardLayout({ children }) {
-  const [collapsed,    setCollapsed]    = useState(false);
-  const [mobileOpen,   setMobileOpen]   = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <div className={`app-shell${collapsed ? ' app-shell--collapsed' : ''}`}>
-      {/* Mobile overlay */}
       {mobileOpen && (
         <div
           className="sidebar-overlay"
@@ -35,6 +29,7 @@ export default function DashboardLayout({ children }) {
         <main className="page-content">
           {children}
         </main>
+        <MobileBottomNav />
       </div>
     </div>
   );

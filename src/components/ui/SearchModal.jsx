@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { useNavigate } from 'react-router-dom';
+import { Search, X } from 'lucide-react';
 import Badge from './Badge';
 
 export default function SearchModal({ open, onClose }) {
@@ -55,7 +56,7 @@ export default function SearchModal({ open, onClose }) {
       <div className="search-modal" onClick={e => e.stopPropagation()}>
         <div className="search-modal-header">
           <div className="search-modal-input-wrap">
-            <span className="search-modal-icon">🔍</span>
+            <Search size={16} className="search-modal-icon" />
             <input
               ref={inputRef}
               type="text"
@@ -65,10 +66,10 @@ export default function SearchModal({ open, onClose }) {
               className="search-modal-input"
             />
             {q && (
-              <button className="search-modal-clear" onClick={() => setQ('')}>✕</button>
+              <button className="search-modal-clear" onClick={() => setQ('')} aria-label="Clear search"><X size={14} /></button>
             )}
           </div>
-          <button className="search-modal-close" onClick={onClose}>✕</button>
+          <button className="search-modal-close" onClick={onClose} aria-label="Close search"><X size={16} /></button>
         </div>
 
         <div className="search-modal-body">

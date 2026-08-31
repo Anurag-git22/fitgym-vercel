@@ -1,12 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { supabase } from '../../lib/supabaseClient';
-import { Bell, Search, Menu, ChevronRight, Sun, Moon, CheckCheck } from 'lucide-react';
+import {
+  Bell, Search, Menu, ChevronRight, Sun, Moon, CheckCheck,
+  User, Settings, LogOut, ChevronDown,
+} from 'lucide-react';
 import SearchModal from '../ui/SearchModal';
+import Avatar from '../ui/Avatar';
 
-/* Map pathname segments to readable titles */
 const ROUTE_TITLES = {
   dashboard:     'Dashboard',
   trainers:      'Trainers Management',
@@ -33,17 +36,19 @@ function getPageDetails(pathname) {
 }
 
 export default function Topbar({ onMenuToggle }) {
-  const { profile, role } = useAuth();
+  const { profile, role, signOut } = useAuth();
   const { theme, toggle } = useTheme();
   const location = useLocation();
+  const navigate = useNavigate();
   const { portal, pageTitle } = getPageDetails(location.pathname);
-  const [timeStr,       setTimeStr]       = useState('');
-  const [notifs,        setNotifs]        = useState([]);
-  const [notifOpen,     setNotifOpen]     = useState(false);
-  const [searchOpen,    setSearchOpen]    = useState(false);
+  const [timeStr, setTimeStr] = useState('');
+  const [notifs, setNotifs] = useState([]);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const notifRef = useRef(null);
+  const menuRef = useRef(null);
 
-  /* ── Clock ─────────────────────────────────────────────── */
   useEffect(() => {
     const update = () => {
       const now = new Date();
@@ -54,7 +59,6 @@ export default function Topbar({ onMenuToggle }) {
     return () => clearInterval(interval);
   }, []);
 
-  /* ── Fetch notifications for current user ───────────────── */
   useEffect(() => {
     if (!profile?.id) return;
 
@@ -70,7 +74,6 @@ export default function Topbar({ onMenuToggle }) {
 
     fetchNotifs();
 
-    // Realtime subscription
     const channel = supabase
       .channel(`notifs-${profile.id}`)
       .on('postgres_changes', {
@@ -84,18 +87,26 @@ export default function Topbar({ onMenuToggle }) {
     return () => supabase.removeChannel(channel);
   }, [profile?.id]);
 
-  /* ── Close dropdown on outside click ───────────────────── */
   useEffect(() => {
     function handleClick(e) {
-      if (notifRef.current && !notifRef.current.contains(e.target)) {
-        setNotifOpen(false);
-      }
+      if (notifRef.current && !notifRef.current.contains(e.target)) setNotifOpen(false);
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
     }
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  /* ── Mark all as read ───────────────────────────────────── */
+  useEffect(() => {
+    function onKey(e) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
   async function markAllRead() {
     if (!profile?.id) return;
     await supabase
@@ -106,10 +117,14 @@ export default function Topbar({ onMenuToggle }) {
     setNotifs(n => n.map(x => ({ ...x, is_read: true })));
   }
 
-  /* ── Mark single as read ────────────────────────────────── */
   async function markRead(id) {
     await supabase.from('notifications').update({ is_read: true }).eq('id', id);
     setNotifs(n => n.map(x => x.id === id ? { ...x, is_read: true } : x));
+  }
+
+  async function handleSignOut() {
+    await signOut();
+    navigate('/login');
   }
 
   const unreadCount = notifs.filter(n => !n.is_read).length;
@@ -122,7 +137,6 @@ export default function Topbar({ onMenuToggle }) {
 
   return (
     <header className="topbar">
-      {/* Left */}
       <div className="topbar-left">
         <button className="topbar-hamburger" onClick={onMenuToggle} aria-label="Toggle navigation menu">
           <Menu size={20} />
@@ -137,13 +151,12 @@ export default function Topbar({ onMenuToggle }) {
         </div>
       </div>
 
-      {/* Center: Search trigger */}
       <button className="topbar-search-btn" onClick={() => setSearchOpen(true)} aria-label="Open search">
         <Search size={15} />
-        <span>Search...</span>
+        <span>Search…</span>
+        <kbd className="topbar-kbd">Ctrl K</kbd>
       </button>
 
-      {/* Right */}
       <div className="topbar-right">
         {timeStr && (
           <div className="topbar-live-badge">
@@ -152,38 +165,20 @@ export default function Topbar({ onMenuToggle }) {
           </div>
         )}
 
-        {/* ── Notification bell — ALL roles ─────────────────── */}
         <div className="topbar-notif-wrap" ref={notifRef}>
-          {role === 'admin' ? (
-            /* Admin goes to the full notifications page */
-            <Link
-              to="/admin/notifications"
-              className="topbar-icon-btn"
-              aria-label="Notifications"
-              title="Notifications"
-            >
-              <Bell size={18} />
-              {unreadCount > 0 && (
-                <span className="topbar-badge-count">{unreadCount}</span>
-              )}
-            </Link>
-          ) : (
-            /* Trainer & Trainee get inline dropdown */
-            <button
-              className="topbar-icon-btn"
-              onClick={() => setNotifOpen(o => !o)}
-              aria-label="Notifications"
-              title="Notifications"
-            >
-              <Bell size={18} />
-              {unreadCount > 0 && (
-                <span className="topbar-badge-count">{unreadCount}</span>
-              )}
-            </button>
-          )}
+          <button
+            className="topbar-icon-btn"
+            onClick={() => { setNotifOpen(o => !o); setMenuOpen(false); }}
+            aria-label="Notifications"
+            title="Notifications"
+          >
+            <Bell size={18} />
+            {unreadCount > 0 && (
+              <span className="topbar-badge-count">{unreadCount > 9 ? '9+' : unreadCount}</span>
+            )}
+          </button>
 
-          {/* Dropdown panel */}
-          {notifOpen && role !== 'admin' && (
+          {notifOpen && (
             <div className="notif-dropdown">
               <div className="notif-dropdown-header">
                 <span className="notif-dropdown-title">Notifications</span>
@@ -223,11 +218,19 @@ export default function Topbar({ onMenuToggle }) {
                   ))
                 )}
               </div>
+              {role === 'admin' && (
+                <Link
+                  to="/admin/notifications"
+                  className="notif-dropdown-footer"
+                  onClick={() => setNotifOpen(false)}
+                >
+                  View all broadcasts
+                </Link>
+              )}
             </div>
           )}
         </div>
 
-        {/* Theme toggle */}
         <button
           className="topbar-icon-btn theme-toggle-btn"
           onClick={toggle}
@@ -237,28 +240,53 @@ export default function Topbar({ onMenuToggle }) {
           {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
         </button>
 
-        {/* Avatar */}
         {profile && (
-          <div className="topbar-avatar-wrap">
-            {profileLink ? (
-              <Link to={profileLink} className="topbar-avatar" title="View Profile">
-                {profile.avatar_url
-                  ? <img src={profile.avatar_url} alt={profile.name} />
-                  : <span>{profile.name?.[0]?.toUpperCase() ?? '?'}</span>
-                }
-              </Link>
-            ) : (
-              <div className="topbar-avatar">
-                {profile.avatar_url
-                  ? <img src={profile.avatar_url} alt={profile.name} />
-                  : <span>{profile.name?.[0]?.toUpperCase() ?? '?'}</span>
-                }
+          <div className="topbar-avatar-wrap" ref={menuRef}>
+            <button
+              type="button"
+              className="topbar-profile-btn"
+              onClick={() => { setMenuOpen(o => !o); setNotifOpen(false); }}
+              aria-expanded={menuOpen}
+              aria-haspopup="menu"
+            >
+              <Avatar
+                src={profile.avatar_url}
+                name={profile.name}
+                size={36}
+                status={profile.account_status === 'active' ? 'active' : 'inactive'}
+              />
+              <div className="topbar-user-info">
+                <span className="topbar-user-name">{profile.name}</span>
+                <span className="topbar-user-role">{profile.role}</span>
+              </div>
+              <ChevronDown size={14} className={`topbar-caret${menuOpen ? ' topbar-caret--open' : ''}`} />
+            </button>
+
+            {menuOpen && (
+              <div className="profile-dropdown" role="menu">
+                <div className="profile-dropdown-head">
+                  <Avatar src={profile.avatar_url} name={profile.name} size={40} />
+                  <div>
+                    <div className="profile-dropdown-name">{profile.name}</div>
+                    <div className="profile-dropdown-email">{profile.email}</div>
+                  </div>
+                </div>
+                {profileLink && (
+                  <Link to={profileLink} className="profile-dropdown-item" onClick={() => setMenuOpen(false)} role="menuitem">
+                    {role === 'admin' ? <Settings size={15} /> : <User size={15} />}
+                    {role === 'admin' ? 'Settings' : 'View profile'}
+                  </Link>
+                )}
+                <button type="button" className="profile-dropdown-item" onClick={() => { toggle(); setMenuOpen(false); }} role="menuitem">
+                  {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+                  {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+                </button>
+                <button type="button" className="profile-dropdown-item profile-dropdown-item--danger" onClick={handleSignOut} role="menuitem">
+                  <LogOut size={15} />
+                  Sign out
+                </button>
               </div>
             )}
-            <div className="topbar-user-info">
-              <span className="topbar-user-name">{profile.name}</span>
-              <span className="topbar-user-role">{profile.role}</span>
-            </div>
           </div>
         )}
       </div>

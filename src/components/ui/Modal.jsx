@@ -1,68 +1,73 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { X } from 'lucide-react';
 
 /**
- * Modal — Accessible Dark Glassmorphism Dialog Overlay
+ * Modal — glass dialog with enter/exit animation.
  */
 export default function Modal({ open, onClose, title, size = 'md', children }) {
   const dialogRef = useRef(null);
+  const [visible, setVisible] = useState(open);
+  const [leaving, setLeaving] = useState(false);
 
-  // Close on Escape key
   useEffect(() => {
-    if (!open) return;
+    if (open) {
+      setVisible(true);
+      setLeaving(false);
+      return;
+    }
+    if (!visible) return undefined;
+    setLeaving(true);
+    const t = setTimeout(() => {
+      setVisible(false);
+      setLeaving(false);
+    }, 160);
+    return () => clearTimeout(t);
+  }, [open, visible]);
+
+  useEffect(() => {
+    if (!visible || leaving) return;
     function onKey(e) {
       if (e.key === 'Escape') onClose();
     }
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [open, onClose]);
+  }, [visible, leaving, onClose]);
 
-  // Lock body scroll while open
   useEffect(() => {
-    if (open) {
+    if (visible && !leaving) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
     return () => { document.body.style.overflow = ''; };
-  }, [open]);
+  }, [visible, leaving]);
 
-  // Move focus into dialog on open
   useEffect(() => {
-    if (open && dialogRef.current) {
-      dialogRef.current.focus();
-    }
+    if (open && dialogRef.current) dialogRef.current.focus();
   }, [open]);
 
-  if (!open) return null;
+  if (!visible) return null;
 
   return (
     <div
-      className="modal-overlay"
+      className={`modal-overlay${leaving ? ' modal-overlay--out' : ''}`}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
       role="presentation"
     >
       <div
-        className={`modal-dialog modal-dialog--${size}`}
+        className={`modal-dialog modal-dialog--${size}${leaving ? ' modal-dialog--out' : ''}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? 'modal-title' : undefined}
         ref={dialogRef}
         tabIndex={-1}
       >
-        {/* Header */}
         <div className="modal-header">
           {title && <h2 id="modal-title" className="modal-title">{title}</h2>}
-          <button
-            className="modal-close"
-            onClick={onClose}
-            aria-label="Close dialog"
-          >
+          <button className="modal-close" onClick={onClose} aria-label="Close dialog">
             <X size={18} />
           </button>
         </div>
-
-        {/* Body */}
         <div className="modal-body">
           {children}
         </div>

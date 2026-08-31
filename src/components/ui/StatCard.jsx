@@ -8,7 +8,7 @@ export default function StatCard({
   value,
   icon,
   trend,
-  trendLabel = 'vs last month',
+  hint,
   color = 'blue',
   loading = false,
   onClick
@@ -60,6 +60,7 @@ export default function StatCard({
 
       <div className="stat-card-value">{value ?? '—'}</div>
       <div className="stat-card-label">{label}</div>
+      {hint && <div className="stat-card-hint">{hint}</div>}
     </div>
   );
 }

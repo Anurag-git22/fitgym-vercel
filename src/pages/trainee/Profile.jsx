@@ -204,7 +204,7 @@ export default function TraineeProfile() {
             <Card title="Assigned Trainer">
               {trainee?.trainers?.profiles?.name ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <div className="sidebar-user-avatar" style={{ width: 48, height: 48, fontSize: '1.2rem' }}>
+                  <div className="avatar-lg" style={{ width: 48, height: 48, fontSize: '1.2rem' }}>
                     {trainee.trainers.profiles.name[0].toUpperCase()}
                   </div>
                   <div>

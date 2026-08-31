@@ -1,8 +1,5 @@
 import { Inbox } from 'lucide-react';
 
-/**
- * EmptyState — Minimalist Dark Placeholder for Empty Lists/Queries
- */
 export default function EmptyState({
   icon,
   title = 'No records found',
@@ -13,20 +10,9 @@ export default function EmptyState({
     <div className="empty-state">
       <div className="empty-state-icon">
         {icon ? (
-          typeof icon === 'string' ? icon : icon
+          typeof icon === 'string' ? <span>{icon}</span> : icon
         ) : (
-          <div style={{
-            width: 56,
-            height: 56,
-            borderRadius: 'var(--radius-lg)',
-            background: 'rgba(255, 255, 255, 0.03)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'var(--text-muted)',
-            margin: '0 auto'
-          }}>
+          <div className="empty-state-icon-box">
             <Inbox size={26} />
           </div>
         )}
