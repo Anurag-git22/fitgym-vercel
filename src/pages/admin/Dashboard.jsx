@@ -8,7 +8,6 @@ import Chart from '../../components/ui/Chart';
 import Badge from '../../components/ui/Badge';
 import QuickActionCard from '../../components/ui/QuickActionCard';
 import Table from '../../components/ui/Table';
-import ThreeDHero from '../../components/3d/ThreeDHero';
 import {
   Users,
   UserCheck,
@@ -322,7 +321,28 @@ export default function AdminDashboard() {
             </div>
           </div>
         </div>
-        <ThreeDHero attendancePct={attendanceRate} status="Operating Peak" activeMembers={stats?.trainees ?? 0} />
+        {/* CSS-only hero visual — no canvas, no overflow */}
+        <div className="hero-visual-wrap">
+          <div className="hero-visual-ring hero-visual-ring--1" />
+          <div className="hero-visual-ring hero-visual-ring--2" />
+          <div className="hero-visual-ring hero-visual-ring--3" />
+          <div className="hero-visual-glow" />
+          <div className="hero-visual-icon">💪</div>
+          <div className="hero-badge hero-badge--top">
+            <span className="hero-badge-dot" />
+            <div>
+              <div className="hero-badge-val">Operating Peak</div>
+              <div className="hero-badge-lbl">System Status</div>
+            </div>
+          </div>
+          <div className="hero-badge hero-badge--bottom">
+            <span className="hero-badge-dot hero-badge-dot--cyan" />
+            <div>
+              <div className="hero-badge-val">{attendanceRate} Check-in</div>
+              <div className="hero-badge-lbl">Daily Engagement</div>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* ── KPI Stat Cards Grid ──────────────────────────────── */}
