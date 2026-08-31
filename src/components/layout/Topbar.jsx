@@ -112,18 +112,6 @@ export default function Topbar({ onMenuToggle }) {
     setNotifs(n => n.map(x => x.id === id ? { ...x, is_read: true } : x));
   }
 
-  /* ── Keyboard shortcut for search ───────────────────────── */
-  useEffect(() => {
-    function handleKey(e) {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        setSearchOpen(o => !o);
-      }
-    }
-    document.addEventListener('keydown', handleKey);
-    return () => document.removeEventListener('keydown', handleKey);
-  }, []);
-
   const unreadCount = notifs.filter(n => !n.is_read).length;
 
   const profileLink =
@@ -153,7 +141,6 @@ export default function Topbar({ onMenuToggle }) {
       <button className="topbar-search-btn" onClick={() => setSearchOpen(true)} aria-label="Open search">
         <Search size={15} />
         <span>Search...</span>
-        <kbd>⌘K</kbd>
       </button>
 
       {/* Right */}

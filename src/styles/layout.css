@@ -401,17 +401,6 @@
   color: var(--text-primary);
 }
 
-.topbar-search-btn kbd {
-  margin-left: auto;
-  padding: 0.15rem 0.4rem;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 4px;
-  font-size: 0.7rem;
-  font-family: inherit;
-  color: var(--text-muted);
-}
-
 [data-theme="light"] .topbar-search-btn {
   background: rgba(0, 0, 0, 0.04);
   border-color: rgba(0, 0, 0, 0.08);
@@ -422,12 +411,6 @@
   background: #ffffff;
   border-color: rgba(79, 70, 229, 0.4);
   color: #0f172a;
-}
-
-[data-theme="light"] .topbar-search-btn kbd {
-  background: rgba(0, 0, 0, 0.04);
-  border-color: rgba(0, 0, 0, 0.08);
-  color: #94a3b8;
 }
 
 /* Topbar Right */
