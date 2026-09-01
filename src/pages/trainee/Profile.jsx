@@ -20,7 +20,7 @@ export default function TraineeProfile() {
   const { profile, refreshProfile } = useAuth();
   const [tab, setTab] = useState('overview');
 
-  const [form, setForm] = useState({ name: profile?.name ?? '', phone: profile?.phone ?? '' });
+  const [form, setForm] = useState({ name: profile?.name ?? '', phone: profile?.phone ?? '', height_cm: profile?.height_cm ?? '' });
   const [pwForm, setPwForm] = useState({ next: '', confirm: '' });
   const [profileMsg, setProfileMsg] = useState('');
   const [profileErr, setProfileErr] = useState('');
@@ -68,7 +68,11 @@ export default function TraineeProfile() {
 
   async function saveProfile(e) {
     e.preventDefault(); setBusy(true); setProfileErr(''); setProfileMsg('');
-    const { error } = await supabase.from('profiles').update({ name: form.name, phone: form.phone || null }).eq('id', profile.id);
+    const { error } = await supabase.from('profiles').update({
+      name: form.name,
+      phone: form.phone || null,
+      height_cm: form.height_cm ? Number(form.height_cm) : null,
+    }).eq('id', profile.id);
     setBusy(false);
     if (error) { setProfileErr(error.message); return; }
     setProfileMsg('Profile updated.'); refreshProfile();
@@ -170,6 +174,7 @@ export default function TraineeProfile() {
                 <dt>Email</dt> <dd>{profile?.email}</dd>
                 <dt>Phone</dt> <dd>{profile?.phone ?? '—'}</dd>
                 <dt>Date of Birth</dt> <dd>{trainee?.date_of_birth ?? '—'}</dd>
+                <dt>Height</dt> <dd>{profile?.height_cm ? `${profile.height_cm} cm` : '—'}</dd>
               </dl>
             </Card>
             <Card title="Membership">
@@ -300,9 +305,12 @@ export default function TraineeProfile() {
               <div className="form-group"><label>Full Name *</label><input required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} /></div>
               <div className="form-group"><label>Phone</label><input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} /></div>
             </div>
-            <div className="form-group">
-              <label>Email</label>
-              <input value={profile?.email ?? ''} disabled style={{ opacity: 0.6 }} />
+            <div className="form-row">
+              <div className="form-group"><label>Height (cm)</label><input type="number" value={form.height_cm} onChange={e => setForm(f => ({ ...f, height_cm: e.target.value }))} placeholder="170" /></div>
+              <div className="form-group">
+                <label>Email</label>
+                <input value={profile?.email ?? ''} disabled style={{ opacity: 0.6 }} />
+              </div>
             </div>
             {profileErr && <div className="auth-error">{profileErr}</div>}
             {profileMsg && <div className="auth-success">{profileMsg}</div>}
