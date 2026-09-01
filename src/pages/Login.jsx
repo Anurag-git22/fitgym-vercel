@@ -256,7 +256,7 @@ export default function Login() {
                   Forgot password?
                 </Link>
               </div>
-              <div style={{ position: 'relative' }}>
+              <div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}>
                 <input
                   id="password"
                   type={showPass ? 'text' : 'password'}
@@ -266,17 +266,26 @@ export default function Login() {
                   onChange={e => setPassword(e.target.value)}
                   placeholder="••••••••"
                   disabled={busy || loading}
-                  style={{ paddingRight: '3rem' }}
+                  style={{ width: '100%', paddingRight: '3.25rem' }}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPass(s => !s)}
                   style={{
-                    position: 'absolute', right: '0.75rem', top: '50%',
-                    transform: 'translateY(-50%)', background: 'none', border: 'none',
-                    color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.75rem',
-                    fontWeight: 600, padding: '0.25rem',
+                    position: 'absolute',
+                    right: '0.75rem',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--text-muted)',
+                    cursor: 'pointer',
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    padding: '0.25rem 0.35rem',
+                    zIndex: 2,
                   }}
+                  aria-label={showPass ? 'Hide password' : 'Show password'}
                 >
                   {showPass ? 'Hide' : 'Show'}
                 </button>

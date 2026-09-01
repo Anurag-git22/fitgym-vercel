@@ -15,7 +15,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Flame,
-  User
+  User,
+  CalendarDays
 } from 'lucide-react';
 
 /* ── Grouped Nav Definitions ───────────────────────────────── */
@@ -26,6 +27,7 @@ const NAV_CONFIG = {
       items: [
         { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
         { to: '/admin/analytics', icon: TrendingUp, label: 'Analytics' },
+        { to: '/admin/calendar', icon: CalendarDays, label: 'Calendar' },
       ]
     },
     {
@@ -51,6 +53,7 @@ const NAV_CONFIG = {
       category: 'Overview',
       items: [
         { to: '/trainer/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+        { to: '/trainer/calendar', icon: CalendarDays, label: 'Calendar' },
       ]
     },
     {
@@ -76,6 +79,7 @@ const NAV_CONFIG = {
         { to: '/trainee/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
         { to: '/trainee/profile', icon: User, label: 'Profile' },
         { to: '/trainee/membership', icon: IdCard, label: 'My Membership' },
+        { to: '/trainee/calendar', icon: CalendarDays, label: 'Calendar' },
       ]
     },
     {

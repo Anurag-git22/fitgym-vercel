@@ -118,6 +118,8 @@
 .form-group input,
 .form-group select,
 .form-group textarea {
+  width: 100%;
+  display: block;
   padding: 0.7rem 0.95rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md);
@@ -127,6 +129,11 @@
   transition: all 0.2s ease;
   outline: none;
   font-family: inherit;
+}
+
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
 }
 
 .form-group input::placeholder,

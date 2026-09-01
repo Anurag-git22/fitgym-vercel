@@ -21,6 +21,7 @@ import AdminAttendance    from './pages/admin/Attendance';
 import AdminAnalytics     from './pages/admin/Analytics';
 import AdminNotifications from './pages/admin/Notifications';
 import AdminSettings      from './pages/admin/Settings';
+import AdminCalendar      from './pages/admin/Calendar';
 
 /* ── Trainer pages ──────────────────────────────────────────── */
 import TrainerDashboard    from './pages/trainer/Dashboard';
@@ -30,6 +31,7 @@ import TrainerWorkouts     from './pages/trainer/Workouts';
 import TrainerAttendance   from './pages/trainer/Attendance';
 import TrainerProgress     from './pages/trainer/Progress';
 import TrainerProfile      from './pages/trainer/Profile';
+import TrainerCalendar     from './pages/trainer/Calendar';
 
 /* ── Trainee pages ──────────────────────────────────────────── */
 import TraineeDashboard  from './pages/trainee/Dashboard';
@@ -39,6 +41,7 @@ import TraineeWorkout    from './pages/trainee/Workout';
 import TraineeAttendance from './pages/trainee/Attendance';
 import TraineeProgress   from './pages/trainee/Progress';
 import TraineePayments   from './pages/trainee/Payments';
+import TraineeCalendar   from './pages/trainee/Calendar';
 
 import { isSupabaseConfigured } from './lib/supabaseClient';
 
@@ -101,6 +104,7 @@ export default function App() {
             <Route path="/admin/analytics"     element={<WithLayout><AdminAnalytics /></WithLayout>} />
             <Route path="/admin/notifications" element={<WithLayout><AdminNotifications /></WithLayout>} />
             <Route path="/admin/settings"      element={<WithLayout><AdminSettings /></WithLayout>} />
+            <Route path="/admin/calendar"      element={<WithLayout><AdminCalendar /></WithLayout>} />
           </Route>
 
           {/* ── Trainer ────────────────────────────────────── */}
@@ -112,6 +116,7 @@ export default function App() {
             <Route path="/trainer/attendance"      element={<WithLayout><TrainerAttendance /></WithLayout>} />
             <Route path="/trainer/progress"        element={<WithLayout><TrainerProgress /></WithLayout>} />
             <Route path="/trainer/profile"         element={<WithLayout><TrainerProfile /></WithLayout>} />
+            <Route path="/trainer/calendar"        element={<WithLayout><TrainerCalendar /></WithLayout>} />
           </Route>
 
           {/* ── Trainee ────────────────────────────────────── */}
@@ -123,6 +128,7 @@ export default function App() {
             <Route path="/trainee/attendance" element={<WithLayout><TraineeAttendance /></WithLayout>} />
             <Route path="/trainee/progress"   element={<WithLayout><TraineeProgress /></WithLayout>} />
             <Route path="/trainee/payments"   element={<WithLayout><TraineePayments /></WithLayout>} />
+            <Route path="/trainee/calendar"   element={<WithLayout><TraineeCalendar /></WithLayout>} />
           </Route>
 
           {/* ── Catch-all ──────────────────────────────────── */}
