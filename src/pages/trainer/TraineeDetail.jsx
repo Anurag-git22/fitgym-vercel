@@ -4,6 +4,11 @@ import { useSupabaseQuery } from '../../hooks/useSupabaseQuery';
 import Card  from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Table from '../../components/ui/Table';
+import GoalCard from '../../components/ui/GoalCard';
+import EmptyState from '../../components/ui/EmptyState';
+import { useState } from 'react';
+import Modal from '../../components/ui/Modal';
+import { Plus } from 'lucide-react';
 
 export default function TrainerTraineeDetail() {
   const { id } = useParams();
@@ -27,6 +32,42 @@ export default function TrainerTraineeDetail() {
   const { data: progress } = useSupabaseQuery(() =>
     supabase.from('progress').select('*').eq('trainee_id', id).order('recorded_date', { ascending: false }).limit(10),
   [id]);
+
+  const { data: goals, loading: goalsLoading, refetch: refetchGoals } = useSupabaseQuery(() =>
+    supabase.from('fitness_goals').select('*').eq('trainee_id', id).order('created_at', { ascending: false }),
+  [id]);
+
+  const [goalModal, setGoalModal] = useState(false);
+  const [goalForm, setGoalForm] = useState({ title: '', target_value: '', current_value: '0', unit: 'kg', target_date: '' });
+  const [goalBusy, setGoalBusy] = useState(false);
+  const [goalError, setGoalError] = useState('');
+
+  async function submitGoal(e) {
+    e.preventDefault(); setGoalBusy(true); setGoalError('');
+    const { error: err } = await supabase.from('fitness_goals').insert({
+      trainee_id: id,
+      title: goalForm.title,
+      target_value: Number(goalForm.target_value),
+      current_value: Number(goalForm.current_value),
+      unit: goalForm.unit,
+      target_date: goalForm.target_date || null,
+    });
+    setGoalBusy(false);
+    if (err) { setGoalError(err.message); return; }
+    setGoalModal(false);
+    setGoalForm({ title: '', target_value: '', current_value: '0', unit: 'kg', target_date: '' });
+    refetchGoals();
+  }
+
+  async function updateGoal(goalId, updates) {
+    await supabase.from('fitness_goals').update(updates).eq('id', goalId);
+    refetchGoals();
+  }
+
+  async function deleteGoal(goalId) {
+    await supabase.from('fitness_goals').delete().eq('id', goalId);
+    refetchGoals();
+  }
 
   if (loading) return <div className="spinner" style={{ margin: '3rem auto' }} />;
   if (!trainee) return <div className="banner banner--error">Trainee not found or access denied.</div>;
@@ -117,6 +158,72 @@ export default function TrainerTraineeDetail() {
       <Card title="Progress (last 10)" style={{ marginTop: '1.25rem' }} padding={false}>
         <Table columns={progressCols} data={progress ?? []} emptyMsg="No progress entries." />
       </Card>
+
+      {/* Fitness Goals */}
+      <Card
+        title="Fitness Goals"
+        style={{ marginTop: '1.25rem' }}
+        actions={
+          <button className="btn btn-primary btn-sm" onClick={() => setGoalModal(true)}>
+            <Plus size={14} />
+            <span>Add Goal</span>
+          </button>
+        }
+      >
+        {goalsLoading ? (
+          <div className="spinner" style={{ margin: '2rem auto' }} />
+        ) : (goals ?? []).length === 0 ? (
+          <EmptyState icon="🎯" title="No fitness goals yet" message="Add a goal to start tracking progress." />
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+            {(goals ?? []).map(goal => (
+              <GoalCard key={goal.id} goal={goal} onUpdate={updateGoal} onDelete={deleteGoal} editable={true} />
+            ))}
+          </div>
+        )}
+      </Card>
+
+      {/* Add Goal Modal */}
+      <Modal open={goalModal} onClose={() => { setGoalModal(false); setGoalError(''); }} title="Add Fitness Goal" size="sm">
+        <form onSubmit={submitGoal} className="auth-form">
+          <div className="form-group">
+            <label>Goal Title *</label>
+            <input required value={goalForm.title} onChange={e => setGoalForm(f => ({ ...f, title: e.target.value }))} placeholder="e.g., Lose 5 kg" />
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Target Value *</label>
+              <input type="number" step="0.1" required value={goalForm.target_value} onChange={e => setGoalForm(f => ({ ...f, target_value: e.target.value }))} />
+            </div>
+            <div className="form-group">
+              <label>Current Progress *</label>
+              <input type="number" step="0.1" required value={goalForm.current_value} onChange={e => setGoalForm(f => ({ ...f, current_value: e.target.value }))} />
+            </div>
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Unit *</label>
+              <select value={goalForm.unit} onChange={e => setGoalForm(f => ({ ...f, unit: e.target.value }))}>
+                <option value="kg">kg</option>
+                <option value="km">km</option>
+                <option value="days">days</option>
+                <option value="reps">reps</option>
+                <option value="minutes">minutes</option>
+                <option value="sessions">sessions</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Target Date</label>
+              <input type="date" value={goalForm.target_date} onChange={e => setGoalForm(f => ({ ...f, target_date: e.target.value }))} />
+            </div>
+          </div>
+          {goalError && <div className="auth-error">{goalError}</div>}
+          <div className="form-actions">
+            <button type="button" className="btn btn-secondary" onClick={() => { setGoalModal(false); setGoalError(''); }}>Cancel</button>
+            <button type="submit" className="btn btn-primary" disabled={goalBusy}>{goalBusy ? 'Saving…' : 'Add Goal'}</button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }

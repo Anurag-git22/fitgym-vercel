@@ -10,6 +10,7 @@ import Badge     from '../../components/ui/Badge';
 import Modal     from '../../components/ui/Modal';
 import EmptyState from '../../components/ui/EmptyState';
 import { Plus } from 'lucide-react';
+import GoalCard from '../../components/ui/GoalCard';
 
 function calcBMI(weight, heightCm) {
   if (!weight || !heightCm) return null;
@@ -106,6 +107,48 @@ export default function TraineeDashboard() {
   }, [traineeId]);
 
   const latestProgress = (progressRecords ?? []).slice(-1)[0] ?? null;
+
+  /* Fitness goals */
+  const { data: goals, loading: goalsLoading, refetch: refetchGoals } = useSupabaseQuery(() => {
+    if (!traineeId) return Promise.resolve({ data: [], error: null });
+    return supabase
+      .from('fitness_goals')
+      .select('*')
+      .eq('trainee_id', traineeId)
+      .order('created_at', { ascending: false });
+  }, [traineeId]);
+
+  const [goalModal, setGoalModal] = useState(false);
+  const [goalForm, setGoalForm] = useState({ title: '', target_value: '', current_value: '0', unit: 'kg', target_date: '' });
+  const [goalBusy, setGoalBusy] = useState(false);
+  const [goalError, setGoalError] = useState('');
+
+  async function submitGoal(e) {
+    e.preventDefault(); setGoalBusy(true); setGoalError('');
+    const { error: err } = await supabase.from('fitness_goals').insert({
+      trainee_id: traineeId,
+      title: goalForm.title,
+      target_value: Number(goalForm.target_value),
+      current_value: Number(goalForm.current_value),
+      unit: goalForm.unit,
+      target_date: goalForm.target_date || null,
+    });
+    setGoalBusy(false);
+    if (err) { setGoalError(err.message); return; }
+    setGoalModal(false);
+    setGoalForm({ title: '', target_value: '', current_value: '0', unit: 'kg', target_date: '' });
+    refetchGoals();
+  }
+
+  async function updateGoal(id, updates) {
+    await supabase.from('fitness_goals').update(updates).eq('id', id);
+    refetchGoals();
+  }
+
+  async function deleteGoal(id) {
+    await supabase.from('fitness_goals').delete().eq('id', id);
+    refetchGoals();
+  }
 
   /* Height from profile for BMI */
   const heightCm = profile?.height_cm ?? null;
@@ -232,6 +275,80 @@ export default function TraineeDashboard() {
           </Card>
         </div>
       </div>
+
+      {/* Fitness Goals */}
+      <div style={{ marginTop: '1.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
+          <div>
+            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>Fitness Goals</h3>
+            <p style={{ fontSize: '0.78125rem', color: 'var(--text-muted)', margin: 0 }}>Track your fitness targets and milestones</p>
+          </div>
+          <button className="btn btn-primary btn-sm" onClick={() => setGoalModal(true)}>
+            <Plus size={14} />
+            <span>Add Goal</span>
+          </button>
+        </div>
+
+        {goalsLoading ? (
+          <div className="spinner" style={{ margin: '2rem auto' }} />
+        ) : (goals ?? []).length === 0 ? (
+          <EmptyState icon="🎯" title="No fitness goals yet" message="Set your first goal to start tracking your progress." />
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+            {(goals ?? []).map(goal => (
+              <GoalCard
+                key={goal.id}
+                goal={goal}
+                onUpdate={updateGoal}
+                onDelete={deleteGoal}
+                editable={true}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Add Goal Modal */}
+      <Modal open={goalModal} onClose={() => { setGoalModal(false); setGoalError(''); }} title="Add Fitness Goal" size="sm">
+        <form onSubmit={submitGoal} className="auth-form">
+          <div className="form-group">
+            <label>Goal Title *</label>
+            <input required value={goalForm.title} onChange={e => setGoalForm(f => ({ ...f, title: e.target.value }))} placeholder="e.g., Lose 5 kg" />
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Target Value *</label>
+              <input type="number" step="0.1" required value={goalForm.target_value} onChange={e => setGoalForm(f => ({ ...f, target_value: e.target.value }))} />
+            </div>
+            <div className="form-group">
+              <label>Current Progress *</label>
+              <input type="number" step="0.1" required value={goalForm.current_value} onChange={e => setGoalForm(f => ({ ...f, current_value: e.target.value }))} />
+            </div>
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Unit *</label>
+              <select value={goalForm.unit} onChange={e => setGoalForm(f => ({ ...f, unit: e.target.value }))}>
+                <option value="kg">kg</option>
+                <option value="km">km</option>
+                <option value="days">days</option>
+                <option value="reps">reps</option>
+                <option value="minutes">minutes</option>
+                <option value="sessions">sessions</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Target Date</label>
+              <input type="date" value={goalForm.target_date} onChange={e => setGoalForm(f => ({ ...f, target_date: e.target.value }))} />
+            </div>
+          </div>
+          {goalError && <div className="auth-error">{goalError}</div>}
+          <div className="form-actions">
+            <button type="button" className="btn btn-secondary" onClick={() => { setGoalModal(false); setGoalError(''); }}>Cancel</button>
+            <button type="submit" className="btn btn-primary" disabled={goalBusy}>{goalBusy ? 'Saving…' : 'Add Goal'}</button>
+          </div>
+        </form>
+      </Modal>
 
       <div className="dashboard-charts" style={{ marginTop: '1.5rem' }}>
         {/* Current workout plan */}
